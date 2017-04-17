@@ -9,8 +9,8 @@ public class Solution {
     public int findMaxConsecutiveOnes(int[] nums) {
         int top = 0;
         int current = 0;
-        for (int i = 0; i < nums.length; i++) {
-            if (nums[i] == 0) {
+        for (int num : nums) {
+            if (num == 0) {
                 if (current > top) {
                     top = current;
                 }
