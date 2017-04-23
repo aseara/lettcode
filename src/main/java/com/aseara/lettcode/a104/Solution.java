@@ -2,7 +2,7 @@ package com.aseara.lettcode.a104;
 
 /**
  * Created by 邱境德 on 2017/4/23.
- *
+ * Algorithm 104
  */
 public class Solution {
 
