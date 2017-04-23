@@ -20,6 +20,7 @@ public class Solution {
         Solution s = new Solution();
         System.out.println(1 + 2);
         System.out.println(s.getSum(1, 2));
+        System.out.println(s.getSum(4, 5));
     }
 
 }
