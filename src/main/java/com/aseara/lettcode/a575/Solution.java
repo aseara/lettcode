@@ -15,6 +15,7 @@ public class Solution {
         for (int kind : candies) {
             allKindSet.add(kind);
         }
+
         return Math.min(halfSize, allKindSet.size());
     }
 
