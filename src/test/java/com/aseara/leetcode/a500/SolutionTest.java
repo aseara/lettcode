@@ -1,8 +1,8 @@
 package com.aseara.leetcode.a500;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 /**
  * Created by qiujingde on 2017/4/16.
@@ -17,7 +17,7 @@ public class SolutionTest {
 
         Solution solution = new Solution();
 
-        assertEquals(output, solution.findWords(input));
+        assertArrayEquals(output, solution.findWords(input));
 
     }
 

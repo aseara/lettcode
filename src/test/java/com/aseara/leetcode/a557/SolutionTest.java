@@ -1,10 +1,9 @@
 package com.aseara.leetcode.a557;
 
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Created by qiujingde on 2017/4/15.
@@ -15,12 +14,7 @@ public class SolutionTest {
     /**
      * 解决方案。
      */
-    private static Solution solution;
-
-    @BeforeClass
-    public static void beforeClass() {
-        solution = new Solution();
-    }
+    private Solution solution = new Solution();
 
     @Test
     public void reverseWords() {
