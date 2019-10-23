@@ -31,7 +31,7 @@ class TwoSum {
     @Test
     void test1() {
         int[] nums = new int[] { 2, 7, 11, 15 };
-        int target = 2048 + 9;
+        int target = 9;
         int[] expected = new int[] { 0, 1 };
         assertArrayEquals(expected, twoSum(nums, target));
     }
@@ -45,18 +45,19 @@ class TwoSum {
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
     public int[] twoSum(int[] nums, int target) {
-        int max = 2047;
-        int[] res = new int[max + 1];
+        int[] result = new int[] { -1, -1 };
 
+        Map<Integer, Integer> map = new HashMap<>(nums.length);
         for (int i = 0; i < nums.length; i++) {
-            int ldiff = (target - nums[i]) & max;
-            if (res[ldiff] != 0) {
-                return new int[]{res[ldiff] - 1, i};
+            Integer j = map.get(target - nums[i]);
+            if (j != null) {
+                result[0] = j;
+                result[1] = i;
+                break;
             }
-            res[nums[i] & max] = i + 1;
+            map.put(nums[i], i);
         }
-
-        return new int[2];
+        return result;
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
