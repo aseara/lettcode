@@ -21,10 +21,10 @@ package com.aseara.leetcode.editor.cn.a49;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * desc: 49.字母异位词分组 <br />
@@ -50,38 +50,37 @@ class Solution {
     public List<List<String>> groupAnagrams(String[] strs) {
         List<List<String>> result = new LinkedList<>();
 
-        Map<Integer, List<List<String>>> resultMap = new HashMap<>(strs.length);
-        Map<Integer, int[][]> anagramAlphaMapsMap = new HashMap<>(strs.length);
-        List<Integer> lengthList = new LinkedList<>();
+        // 按长度排序
+        Arrays.sort(strs, Comparator.comparingInt(String::length));
 
+        int lastLength = -1;
+        List<List<String>> groupResult = new LinkedList<>();
+        int[][] groupAnagramAlphaMaps = null;
         for (String str : strs) {
             int curLength = str.length();
-            if (!resultMap.containsKey(curLength)) {
-                resultMap.put(curLength, new LinkedList<>());
-                anagramAlphaMapsMap.put(curLength, new int[strs.length][]);
-                lengthList.add(curLength);
+
+            if (curLength != lastLength) {
+                groupResult.clear();
+                groupAnagramAlphaMaps = new int[strs.length][];
+                lastLength = curLength;
             }
-            List<List<String>> groupResult = resultMap.get(curLength);
-            int[][] groupAnagramAlphaMaps = anagramAlphaMapsMap.get(curLength);
 
-            groupAnagrams(groupResult, groupAnagramAlphaMaps, str);
-        }
-
-        for(int length : lengthList) {
-            result.addAll(resultMap.get(length));
+            groupAnagrams(result, groupResult, groupAnagramAlphaMaps, str);
         }
 
         return result;
     }
 
-    private void groupAnagrams(List<List<String>> result, int[][] anagramAlphaMaps, String str) {
+    private void groupAnagrams(List<List<String>> result, List<List<String>> groupResult, int[][] anagramAlphaMaps, String str) {
         int[] curAlphaMap = alphaMap(str);
-        int anagramIndex = getAnagramIndex(result.size(), anagramAlphaMaps, curAlphaMap);
-        if (anagramIndex == result.size()) {
-            result.add(new LinkedList<>());
+        int anagramIndex = getAnagramIndex(groupResult.size(), anagramAlphaMaps, curAlphaMap);
+        if (anagramIndex == groupResult.size()) {
+            List<String> anagrams = new LinkedList<>();
+            result.add(anagrams);
+            groupResult.add(anagrams);
             anagramAlphaMaps[anagramIndex] = curAlphaMap;
         }
-        result.get(anagramIndex).add(str);
+        groupResult.get(anagramIndex).add(str);
     }
 
     /**
