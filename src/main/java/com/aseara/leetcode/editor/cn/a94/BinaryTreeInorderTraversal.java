@@ -68,18 +68,32 @@ class TreeNode {
 class Solution {
     public List<Integer> inorderTraversal(TreeNode root) {
         List<Integer> list = new LinkedList<>();
-        traversal(root, list);
+        if (root == null) {
+            return list;
+        }
+
+        LinkedList<TreeNode> stack = new LinkedList<>();
+        stack.push(root);
+
+        while (!stack.isEmpty()) {
+            TreeNode node = stack.peek();
+            while (node.left != null) {
+                stack.push(node.left);
+                node = node.left;
+            }
+            node = stack.pop();
+            list.add(node.val);
+            while (!stack.isEmpty() && node.right == null) {
+                node = stack.pop();
+                list.add(node.val);
+            }
+            if (node.right != null) {
+                stack.push(node.right);
+            }
+        }
+
         return list;
     }
 
-
-    private void traversal(TreeNode root, List<Integer> store) {
-        if (root == null) {
-            return;
-        }
-        traversal(root.left, store);
-        store.add(root.val);
-        traversal(root.right, store);
-    }
 }
 //leetcode submit region end(Prohibit modification and deletion)
