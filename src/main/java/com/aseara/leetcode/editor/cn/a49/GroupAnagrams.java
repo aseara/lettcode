@@ -22,8 +22,8 @@ package com.aseara.leetcode.editor.cn.a49;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -45,23 +45,24 @@ class GroupAnagrams {
     
 }
 
-
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
     public List<List<String>> groupAnagrams(String[] strs) {
-        Map<Integer, List<String>> map = new HashMap<>();
-
-        int[] prime = { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103 };
-
+        Map<String, List<String>> map = new HashMap<>();
         for (String str : strs) {
-            int key = 1;
-            for (char sChar : str.toCharArray()) {
-                key *= prime[sChar - 'a'];
+            String key = sort(str);
+            if (!map.containsKey(key)) {
+                map.put(key, new ArrayList<>());
             }
-            map.computeIfAbsent(key, k -> new LinkedList<>()).add(str);
+            map.get(key).add(str);
         }
-
         return new ArrayList<>(map.values());
+    }
+
+    private String sort(String str) {
+        char[] c = str.toCharArray();
+        Arrays.sort(c);
+        return String.valueOf(c);
     }
 
 }
