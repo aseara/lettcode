@@ -21,9 +21,10 @@ package com.aseara.leetcode.editor.cn.a49;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * desc: 49.字母异位词分组 <br />
@@ -47,25 +48,40 @@ class GroupAnagrams {
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
     public List<List<String>> groupAnagrams(String[] strs) {
-        List<List<String>> result = new ArrayList<>(strs.length);
+        List<List<String>> result = new LinkedList<>();
 
-        int[] anagramLength = new int[strs.length];
-        int[][] anagramAlphaMaps = new int[strs.length][];
+        Map<Integer, List<List<String>>> resultMap = new HashMap<>(strs.length);
+        Map<Integer, int[][]> anagramAlphaMapsMap = new HashMap<>(strs.length);
+        List<Integer> lengthList = new LinkedList<>();
 
         for (String str : strs) {
-            int[] curAlphaMap = alphaMap(str);
             int curLength = str.length();
-            int anagramIndex = getAnagramIndex(result.size(), anagramLength, anagramAlphaMaps,
-                    curLength, curAlphaMap);
-            if (anagramIndex == result.size()) {
-                result.add(new LinkedList<>());
-                anagramAlphaMaps[anagramIndex] = curAlphaMap;
-                anagramLength[anagramIndex] = curLength;
+            if (!resultMap.containsKey(curLength)) {
+                resultMap.put(curLength, new LinkedList<>());
+                anagramAlphaMapsMap.put(curLength, new int[strs.length][]);
+                lengthList.add(curLength);
             }
-            result.get(anagramIndex).add(str);
+            List<List<String>> groupResult = resultMap.get(curLength);
+            int[][] groupAnagramAlphaMaps = anagramAlphaMapsMap.get(curLength);
+
+            groupAnagrams(groupResult, groupAnagramAlphaMaps, str);
+        }
+
+        for(int length : lengthList) {
+            result.addAll(resultMap.get(length));
         }
 
         return result;
+    }
+
+    private void groupAnagrams(List<List<String>> result, int[][] anagramAlphaMaps, String str) {
+        int[] curAlphaMap = alphaMap(str);
+        int anagramIndex = getAnagramIndex(result.size(), anagramAlphaMaps, curAlphaMap);
+        if (anagramIndex == result.size()) {
+            result.add(new LinkedList<>());
+            anagramAlphaMaps[anagramIndex] = curAlphaMap;
+        }
+        result.get(anagramIndex).add(str);
     }
 
     /**
@@ -84,19 +100,13 @@ class Solution {
     /**
      * 判断当前字符串是否在之前的异位词列表中，如果是返回对应的序号，不是返回size
      * @param size 当前异位词组数
-     * @param anagramLength 之前的异位词长度
      * @param anagramAlphaMaps 之前的异位词映射
-     * @param curLength 当前异位词长度
      * @param curAlphaMap 当前异位词映射
      * @return 当前字符串在异位词列表的序号
      */
-    private int getAnagramIndex(int size, int[] anagramLength, int[][] anagramAlphaMaps,
-                                int curLength, int[] curAlphaMap) {
+    private int getAnagramIndex(int size, int[][] anagramAlphaMaps, int[] curAlphaMap) {
         anaGroup:
         for (int i = 0; i < size; i++) {
-            if (curLength != anagramLength[i]) {
-                continue;
-            }
             int[] expected = anagramAlphaMaps[i];
             for (int j = 0; j < 26; j++) {
                 if (expected[j] != curAlphaMap[j]) {
