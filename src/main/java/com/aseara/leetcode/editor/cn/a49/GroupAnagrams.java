@@ -49,19 +49,16 @@ class GroupAnagrams {
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
     public List<List<String>> groupAnagrams(String[] strs) {
-        Map<String, List<String>> map = new HashMap<>();
+        Map<Integer, List<String>> map = new HashMap<>();
+
+        int[] prime = { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103 };
 
         for (String str : strs) {
-            int[] alphas = new int[26];
+            int key = 1;
             for (char sChar : str.toCharArray()) {
-                alphas[sChar - 'a'] ++;
+                key *= prime[sChar - 'a'];
             }
-            StringBuilder sb = new StringBuilder();
-            for (int i : alphas) {
-                sb.append('.').append(i);
-            }
-            map.computeIfAbsent(sb.toString(), k -> new LinkedList<>())
-                    .add(str);
+            map.computeIfAbsent(key, k -> new LinkedList<>()).add(str);
         }
 
         return new ArrayList<>(map.values());
