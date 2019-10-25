@@ -86,8 +86,6 @@ class Solution {
         LinkedList<Boolean> direction = new LinkedList<>();
 
         stack.push(root);
-        direction.push(false);
-        boolean r = false;
 
         while (!stack.isEmpty()) {
             TreeNode node = stack.peek();
@@ -97,16 +95,19 @@ class Solution {
                 node = node.left;
             }
 
-            while (!stack.isEmpty() && (node.right == null || r)) {
-                store.add(node.val);
+            boolean r = true;
+            while (!r || node.right == null) {
                 node = stack.pop();
+                store.add(node.val);
+                if (stack.isEmpty()) {
+                    return;
+                }
+                node = stack.peek();
                 r = direction.pop();
             }
 
-            if (node.right != null) {
-                stack.push(node.right);
-                direction.push(false);
-            }
+            stack.push(node.right);
+            direction.push(false);
         }
     }
 
