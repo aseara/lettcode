@@ -65,7 +65,7 @@ class TreeNode {
 class Solution {
     public List<Integer> postorderTraversal(TreeNode root) {
         LinkedList<Integer> store = new LinkedList<>();
-        traversal4(root, store);
+        traversal3(root, store);
         return store;
     }
 
@@ -108,6 +108,26 @@ class Solution {
 
             stack.push(node.right);
             direction.push(false);
+        }
+    }
+
+    private void traversal3(TreeNode root, LinkedList<Integer> store) {
+        if (root == null) {
+            return;
+        }
+        LinkedList<TreeNode> stack = new LinkedList<>();
+        stack.push(root);
+
+        while (!stack.isEmpty()) {
+            TreeNode node = stack.pop();
+            store.addFirst(node.val);
+
+            if (node.left != null) {
+                stack.push(node.left);
+            }
+            if (node.right != null) {
+                stack.push(node.right);
+            }
         }
     }
 
