@@ -68,7 +68,7 @@ class TreeNode {
 class Solution {
     public List<Integer> inorderTraversal(TreeNode root) {
         List<Integer> store = new LinkedList<>();
-        traversal3(root, store);
+        traversal5(root, store);
         return store;
     }
 
@@ -143,6 +143,44 @@ class Solution {
             } else {
                 store.add(cur.val);
                 cur = cur.right;
+            }
+        }
+    }
+
+    private enum CommandCode {
+        READ, TRAVERSAL
+    }
+
+    private static class Command {
+        CommandCode code;
+        TreeNode node;
+        Command(CommandCode code, TreeNode node) {
+            this.code = code;
+            this.node = node;
+        }
+    }
+
+    private void traversal5(TreeNode root, List<Integer> store) {
+        if (root == null) {
+            return;
+        }
+        LinkedList<Command> stack = new LinkedList<>();
+        stack.push(new Command(CommandCode.TRAVERSAL, root));
+        while (!stack.isEmpty()) {
+            Command command = stack.pop();
+            TreeNode node = command.node;
+            switch (command.code) {
+                case READ:
+                    store.add(node.val);
+                    break;
+                case TRAVERSAL:
+                    if (node.right != null) {
+                        stack.push(new Command(CommandCode.TRAVERSAL, node.right));
+                    }
+                    stack.push(new Command(CommandCode.READ, node));
+                    if (node.left != null) {
+                        stack.push(new Command(CommandCode.TRAVERSAL, node.left));
+                    }
             }
         }
     }
