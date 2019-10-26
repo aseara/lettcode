@@ -82,7 +82,7 @@ class Node {
 class Solution {
     public List<Integer> postorder(Node root) {
         LinkedList<Integer> store = new LinkedList<>();
-        traversal(root, store);
+        traversal2(root, store);
         return store;
     }
 
@@ -97,5 +97,26 @@ class Solution {
         }
         store.add(root.val);
     }
+
+    private void traversal2(Node root, LinkedList<Integer> store) {
+        if (root == null) {
+            return;
+        }
+
+        LinkedList<Node> stack = new LinkedList<>();
+        stack.push(root);
+
+        while (!stack.isEmpty()) {
+            Node node = stack.pop();
+            store.addFirst(node.val);
+
+            if (node.children != null) {
+                for (Node child : node.children) {
+                    stack.push(child);
+                }
+            }
+        }
+    }
+
 }
 //leetcode submit region end(Prohibit modification and deletion)
