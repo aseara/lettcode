@@ -1,0 +1,30 @@
+## CodeFileName
+a$!{question.frontendQuestionId}\\$!velocityTool.camelCaseName(${question.titleSlug})
+
+## CodeTemplate
+${question.content}
+#set($dfClass = $velocityTool.getClass().forName("java.time.format.DateTimeFormatter"))
+#set($strClass = $velocityTool.getClass().forName("java.lang.String"))
+#set($df = $dfClass.getMethod("ofPattern", $strClass).invoke(null, "yyyy/M/d"))
+#set($dateClass = $velocityTool.getClass().forName("java.time.LocalDate"))
+#set($now = $dateClass.getMethod("now").invoke(null))
+package com.aseara.leetcode.editor.cn.a$!{question.frontendQuestionId};
+
+import org.junit.jupiter.api.Test;
+
+/**
+* desc: ${question.frontendQuestionId}.${question.title} <br />
+* Date: ${now.format($df)} <br/>
+*
+* @author qiujingde
+*/
+class $!velocityTool.camelCaseName(${question.titleSlug}) {
+private Solution solution = new Solution();
+
+@Test
+void test1() {
+
+}
+
+}
+${question.code}
