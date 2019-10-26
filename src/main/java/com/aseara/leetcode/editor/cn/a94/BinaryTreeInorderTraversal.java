@@ -67,9 +67,23 @@ class TreeNode {
 
 class Solution {
     public List<Integer> inorderTraversal(TreeNode root) {
-        List<Integer> list = new LinkedList<>();
+        List<Integer> store = new LinkedList<>();
+        traversal3(root, store);
+        return store;
+    }
+
+    private void traversal(TreeNode root, List<Integer> store) {
         if (root == null) {
-            return list;
+            return;
+        }
+        traversal(root.left, store);
+        store.add(root.val);
+        traversal(root.right, store);
+    }
+
+    private void traversal2(TreeNode root, List<Integer> store) {
+        if (root == null) {
+            return;
         }
 
         LinkedList<TreeNode> stack = new LinkedList<>();
@@ -82,18 +96,58 @@ class Solution {
                 node = node.left;
             }
             node = stack.pop();
-            list.add(node.val);
+            store.add(node.val);
             while (!stack.isEmpty() && node.right == null) {
                 node = stack.pop();
-                list.add(node.val);
+                store.add(node.val);
             }
             if (node.right != null) {
                 stack.push(node.right);
             }
         }
-
-        return list;
     }
+
+    private void traversal3(TreeNode root, List<Integer> store) {
+        LinkedList<TreeNode> stack = new LinkedList<>();
+
+        TreeNode cur = root;
+        while (cur != null || !stack.isEmpty()) {
+            while (cur != null) {
+                stack.push(cur);
+                cur = cur.left;
+            }
+
+            cur = stack.pop();
+            store.add(cur.val);
+            cur = cur.right;
+        }
+    }
+
+    /**
+     * 莫里斯循环
+     * @param root   根节点
+     * @param store  输出
+     */
+    private void traversal4(TreeNode root, List<Integer> store) {
+        TreeNode cur = root;
+        while (cur != null) {
+            if (cur.left != null) {
+                TreeNode mostRight = cur.left;
+                while (mostRight.right != null) {
+                    mostRight = mostRight.right;
+                }
+
+                mostRight.right = cur;
+                cur = cur.left;
+                mostRight.right.left = null;
+            } else {
+                store.add(cur.val);
+                cur = cur.right;
+            }
+        }
+    }
+
+
 
 }
 //leetcode submit region end(Prohibit modification and deletion)
