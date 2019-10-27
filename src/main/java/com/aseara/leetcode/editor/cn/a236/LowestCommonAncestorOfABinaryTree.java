@@ -100,7 +100,7 @@ class TreeNode {
 
 class Solution {
     public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
-        return path1(root, p, q);
+        return path2(root, p, q);
     }
 
     private TreeNode path1(TreeNode root, TreeNode p, TreeNode q) {
@@ -146,6 +146,60 @@ class Solution {
         }
 
         return size;
+    }
+
+
+    private TreeNode path2(TreeNode root, TreeNode p, TreeNode q) {
+        if (root.val == p.val || root.val == q.val) {
+            return root;
+        }
+
+        LinkedList<TreeNode> stack = new LinkedList<>();
+        stack.push(root);
+        TreeNode ancestor = null;
+        int left = 0;
+
+        while (ancestor == null || stack.size() > 1) {
+            TreeNode node = stack.peek();
+            TreeNode next;
+            if (node.left == null && node.right == null) {
+                // pop
+                TreeNode pre;
+                do {
+                    node = stack.pop();
+                    if (ancestor == node) {
+                        if (stack.size() == 1) {
+                            return root;
+                        }
+                        ancestor = stack.peek();
+                    }
+                    pre = stack.peek();
+                } while (pre.right == null || pre.right == node);
+                next = pre.right;
+            } else if (node.left != null) {
+                next = node.left;
+            } else {
+                next = node.right;
+            }
+
+            while (next != null) {
+                if (ancestor == null) {
+                    if (next.val == p.val) {
+                        ancestor = next;
+                        left = q.val;
+                    } else if (next.val == q.val) {
+                        ancestor = next;
+                        left = p.val;
+                    }
+                } else if (next.val == left){
+                    return ancestor;
+                }
+                stack.push(next);
+                next = next.left;
+            }
+        }
+
+        return root;
     }
 
 
