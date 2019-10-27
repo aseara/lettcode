@@ -29,10 +29,12 @@ package com.aseara.leetcode.editor.cn.a429;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
@@ -98,34 +100,15 @@ class Node {
 
 class Solution {
     public List<List<Integer>> levelOrder(Node root) {
-        List<List<Integer>> store = new LinkedList<>();
+        List<List<Integer>> store = new ArrayList<>();
 
-        if (root != null) {
+//        if (root != null) {
 //            LinkedList<Node> rootLevel = new LinkedList<>();
 //            rootLevel.add(root);
 //            traversal2(rootLevel, store);
+//        }
 
-            List<Node> curLevel = Collections.singletonList(root);
-            List<Integer> curStore = Collections.singletonList(root.val);
-
-            while (!curStore.isEmpty()) {
-                store.add(curStore);
-
-                curStore = new LinkedList<>();
-                List<Node> nextLevel = new LinkedList<>();
-
-                for (Node node : curLevel) {
-                    if (node.children != null) {
-                        for (Node child : node.children) {
-                            curStore.add(child.val);
-                            nextLevel.add(child);
-                        }
-                    }
-                }
-                curLevel = nextLevel;
-            }
-        }
-
+        traversal5(root, store);
         return store;
     }
 
@@ -154,6 +137,77 @@ class Solution {
             }
         }
         return nextLevel;
+    }
+
+    private void traversal3(Node root, List<List<Integer>> store) {
+        if (root == null) {
+            return;
+        }
+
+        List<Node> curLevel = Collections.singletonList(root);
+        List<Integer> curStore = Collections.singletonList(root.val);
+
+        while (!curStore.isEmpty()) {
+            store.add(curStore);
+
+            curStore = new LinkedList<>();
+            List<Node> nextLevel = new LinkedList<>();
+
+            for (Node node : curLevel) {
+                if (node.children != null) {
+                    for (Node child : node.children) {
+                        curStore.add(child.val);
+                        nextLevel.add(child);
+                    }
+                }
+            }
+            curLevel = nextLevel;
+        }
+    }
+
+    private void traversal4(Node node, int level, List<List<Integer>> store) {
+        if (node == null) {
+            return;
+        }
+        List<Integer> levelStore;
+        if (level == store.size()) {
+            levelStore = new LinkedList<>();
+            store.add(levelStore);
+        } else {
+            levelStore = store.get(level);
+        }
+        levelStore.add(node.val);
+        if (node.children != null && !node.children.isEmpty()) {
+            for (Node child : node.children) {
+                traversal4(child, level + 1, store);
+            }
+        }
+    }
+
+    private void traversal5(Node root, List<List<Integer>> store) {
+        if (root == null) {
+            return;
+        }
+
+        Queue<Node> queue = new LinkedList<>();
+        queue.add(root);
+
+        while (!queue.isEmpty()) {
+            int levelSize = queue.size();
+            List<Integer> levelStore = new LinkedList<>();
+            for (int i = 0; i < levelSize; i++) {
+                Node node = queue.poll();
+                if (node != null) {
+                    levelStore.add(node.val);
+                    if (node.children != null) {
+                        queue.addAll(node.children);
+                    }
+                }
+            }
+            if (!levelStore.isEmpty()) {
+                store.add(levelStore);
+            }
+        }
     }
 
 }
