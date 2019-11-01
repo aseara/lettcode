@@ -81,7 +81,7 @@ class WordLadder {
 class Solution {
 
     public int ladderLength(String beginWord, String endWord, List<String> wordList) {
-        return path2(beginWord, endWord, wordList);
+        return path3(beginWord, endWord, wordList);
     }
 
     private int path1(String beginWord, String endWord, List<String> wordList) {
@@ -187,6 +187,61 @@ class Solution {
             map2.computeIfAbsent(pathWord, k -> new LinkedList<>()).add(word);
         }
     }
+
+    // 双向BFS
+    private int path3(String beginWord, String endWord, List<String> wordList) {
+        // abc -> *bc, a*c, ab*
+        Map<String, List<String>> map1 = new HashMap<>(wordList.size());
+        // *bc -> abc, bbc, cbc
+        Map<String, List<String>> map2 = new HashMap<>(wordList.size() * 3);
+
+        for(String word : wordList) {
+            fillMap(map1, map2, word);
+        }
+        fillMap(map1, map2, beginWord);
+
+        if (!map1.containsKey(endWord)) {
+            return 0;
+        }
+
+        Set<String> visited = new HashSet<>();
+
+        Set<String> beginSet = new HashSet<>();
+        beginSet.add(beginWord);
+
+        Set<String> endSet = new HashSet<>();
+        endSet.add(endWord);
+
+        int step = 1;
+        while (!beginSet.isEmpty() && visited.size() < map1.size()) {
+            step ++;
+
+            Set<String> tempSet = new HashSet<>();
+            for (String curWord : beginSet) {
+                if (visited.contains(curWord)) {
+                    continue;
+                }
+                visited.add(curWord);
+                for(String path : map1.get(curWord)) {
+                    for (String nextWord : map2.get(path)) {
+                        if (endSet.contains(nextWord)) {
+                            return step;
+                        }
+
+                        if (!visited.contains(nextWord)) {
+                            tempSet.add(nextWord);
+                        }
+                    }
+                }
+            }
+
+            beginSet = endSet;
+            endSet = tempSet;
+        }
+
+        return 0;
+    }
+
 
 }
 //leetcode submit region end(Prohibit modification and deletion)
