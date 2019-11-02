@@ -188,58 +188,83 @@ class Solution {
         }
     }
 
+    private void fillSetMap(Map<String, Set<String>> map1, Map<String, Set<String>> map2, String word) {
+        for (int i = 0; i < word.length(); i++) {
+            String pathWord = word.substring(0, i) + '*' + word.substring(i + 1);
+            map1.computeIfAbsent(word, k -> new HashSet<>()).add(pathWord);
+            map2.computeIfAbsent(pathWord, k -> new HashSet<>()).add(word);
+        }
+    }
+
     // 双向BFS
     private int path3(String beginWord, String endWord, List<String> wordList) {
         // abc -> *bc, a*c, ab*
-        Map<String, List<String>> map1 = new HashMap<>(wordList.size());
+        Map<String, Set<String>> map1 = new HashMap<>(wordList.size());
         // *bc -> abc, bbc, cbc
-        Map<String, List<String>> map2 = new HashMap<>(wordList.size() * 3);
+        Map<String, Set<String>> map2 = new HashMap<>(wordList.size() * 3);
 
         for(String word : wordList) {
-            fillMap(map1, map2, word);
+            fillSetMap(map1, map2, word);
         }
-        fillMap(map1, map2, beginWord);
+        fillSetMap(map1, map2, beginWord);
 
         if (!map1.containsKey(endWord)) {
             return 0;
         }
 
-        Set<String> visited = new HashSet<>();
-
         Set<String> beginSet = new HashSet<>();
-        beginSet.add(beginWord);
-
+        fillNextLevelSet(map1, map2, beginSet, beginWord);
         Set<String> endSet = new HashSet<>();
-        endSet.add(endWord);
+        fillNextLevelSet(map1, map2, endSet, endWord);
 
         int step = 1;
-        while (!beginSet.isEmpty() && visited.size() < map1.size()) {
+        while (!beginSet.isEmpty() && !endSet.isEmpty()) {
             step ++;
-
             Set<String> tempSet = new HashSet<>();
-            for (String curWord : beginSet) {
-                if (visited.contains(curWord)) {
-                    continue;
-                }
-                visited.add(curWord);
-                for(String path : map1.get(curWord)) {
-                    for (String nextWord : map2.get(path)) {
-                        if (endSet.contains(nextWord)) {
-                            return step;
-                        }
+            System.out.println("beginSet:    " + beginSet);
+            System.out.println("endSet:      " + endSet);
 
-                        if (!visited.contains(nextWord)) {
-                            tempSet.add(nextWord);
-                        }
+            for (String path : beginSet) {
+                if (endSet.contains(path)) {
+                    return step;
+                }
+
+                for (String word : map2.get(path)) {
+                    map1.get(word).remove(path);
+                    for (String nextPath : map1.get(word)) {
+                        Set<String> words = map2.get(nextPath);
+
+                        tempSet.add(nextPath);
+                        words.remove(word);
                     }
                 }
+                for (String nextWord : map2.get(path)) {
+                    System.out.print(nextWord + ",  ");
+                    fillNextLevelSet(map1, map2, tempSet, nextWord);
+                }
             }
-
+            System.out.println();
+            System.out.println("tmpSet:      " + tempSet);
             beginSet = endSet;
             endSet = tempSet;
+
+            System.out.println("\n\n");
         }
 
         return 0;
+    }
+
+    private void fillNextLevelSet(
+            Map<String, Set<String>> map1,
+            Map<String, Set<String>> map2,
+            Set<String> tempSet, String word) {
+        for (String nextPath : map1.get(word)) {
+            Set<String> words = map2.get(nextPath);
+            if (words.size() > 1) {
+                tempSet.add(nextPath);
+                words.remove(word);
+            }
+        }
     }
 
 
