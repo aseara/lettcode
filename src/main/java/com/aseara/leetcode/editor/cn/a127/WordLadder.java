@@ -73,6 +73,11 @@ class WordLadder {
         end = "cog";
         dict = Arrays.asList("hot","dot","dog","lot","log");
         assertEquals(0, solution.ladderLength(begin, end, dict));
+
+        begin = "hot";
+        end = "dot";
+        dict = Arrays.asList("hot", "dog", "dot");
+        assertEquals(2, solution.ladderLength(begin, end, dict));
     }
     
 }
@@ -213,16 +218,80 @@ class Solution {
         }
 
         Set<String> beginSet = new HashSet<>();
+        for (String path : map1.get(beginWord)) {
+            if (map2.get(path).size() > 1) {
+                beginSet.add(path);
+            }
+        }
+        Set<String> endSet = new HashSet<>(map1.get(endWord));
+        for (String path : map1.get(endWord)) {
+            if (map2.get(path).size() > 1) {
+                endSet.add(path);
+            }
+        }
+
+        Set<String> visited = new HashSet<>();
+        visited.add(beginWord);
+        visited.add(endWord);
+
+        int step = 1;
+        while (!beginSet.isEmpty() && !endSet.isEmpty()) {
+            step ++;
+            Set<String> tempSet = new HashSet<>();
+            for (String path : beginSet) {
+                if (endSet.contains(path)) {
+                    return step;
+                }
+                Set<String> nextWords = map2.get(path);
+                if (nextWords != null) {
+                    for (String nextWord : nextWords) {
+                        if (!visited.contains(nextWord)) {
+                            visited.add(nextWord);
+                            for (String nextPath : map1.get(nextWord)) {
+                                if (map2.get(nextPath).size() > 1) {
+                                    tempSet.add(nextPath);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            beginSet = endSet;
+            endSet = tempSet;
+        }
+
+        return 0;
+    }
+
+    // 双向BFS 超出时间限制
+    private int path4(String beginWord, String endWord, List<String> wordList) {
+        // abc -> *bc, a*c, ab*
+        Map<String, Set<String>> map1 = new HashMap<>(wordList.size());
+        // *bc -> abc, bbc, cbc
+        Map<String, Set<String>> map2 = new HashMap<>(wordList.size() * 3);
+
+        for(String word : wordList) {
+            fillSetMap(map1, map2, word);
+        }
+        fillSetMap(map1, map2, beginWord);
+
+        if (!map1.containsKey(endWord)) {
+            return 0;
+        }
+
+        Set<String> beginSet = new HashSet<>();
         fillNextLevelSet(map1, map2, beginSet, beginWord);
         Set<String> endSet = new HashSet<>();
         fillNextLevelSet(map1, map2, endSet, endWord);
 
         int step = 1;
         while (!beginSet.isEmpty() && !endSet.isEmpty()) {
+            System.out.println(beginSet);
+            System.out.println(endSet);
+            System.out.println();
+
             step ++;
             Set<String> tempSet = new HashSet<>();
-            System.out.println("beginSet:    " + beginSet);
-            System.out.println("endSet:      " + endSet);
 
             for (String path : beginSet) {
                 if (endSet.contains(path)) {
@@ -230,25 +299,15 @@ class Solution {
                 }
 
                 for (String word : map2.get(path)) {
-                    map1.get(word).remove(path);
                     for (String nextPath : map1.get(word)) {
-                        Set<String> words = map2.get(nextPath);
-
-                        tempSet.add(nextPath);
-                        words.remove(word);
+                        if (!path.equals(nextPath)) {
+                            tempSet.add(nextPath);
+                        }
                     }
                 }
-                for (String nextWord : map2.get(path)) {
-                    System.out.print(nextWord + ",  ");
-                    fillNextLevelSet(map1, map2, tempSet, nextWord);
-                }
             }
-            System.out.println();
-            System.out.println("tmpSet:      " + tempSet);
             beginSet = endSet;
             endSet = tempSet;
-
-            System.out.println("\n\n");
         }
 
         return 0;
@@ -260,13 +319,16 @@ class Solution {
             Set<String> tempSet, String word) {
         for (String nextPath : map1.get(word)) {
             Set<String> words = map2.get(nextPath);
-            if (words.size() > 1) {
-                tempSet.add(nextPath);
-                words.remove(word);
-            }
+            tempSet.add(nextPath);
         }
     }
 
+    // 双向BFS 超出时间限制
+    private int path5(String beginWord, String endWord, List<String> wordList) {
+
+
+        return 0;
+    }
 
 }
 //leetcode submit region end(Prohibit modification and deletion)
