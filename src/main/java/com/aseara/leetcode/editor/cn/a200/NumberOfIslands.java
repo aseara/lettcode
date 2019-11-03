@@ -62,11 +62,6 @@ class NumberOfIslands {
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
 
-    private static final int[][] neighbors = new int[][] {
-            new int[] {0, 1}, new int[] {0, -1},
-            new int[] {1, 0}, new int[] {-1, 0}
-    };
-
     public int numIslands(char[][] grid) {
         int cnt = 0;
         for (int i = 0; i < grid.length; i++) {
@@ -82,14 +77,21 @@ class Solution {
 
     private void destroyIsland(char[][] grid, int x, int y) {
         grid[x][y] = '0';
-        for (int[] neighbor : neighbors) {
-            int xo = neighbor[0];
-            int yo = neighbor[1];
-            if (x + xo >= 0 && x + xo < grid.length
-                    && y + yo >= 0 && y + yo < grid[x + xo].length
-                    && grid[x + xo][y + yo] == '1') {
-                destroyIsland(grid, x + xo, y + yo);
-            }
+
+        if (x - 1 >= 0 && grid[x - 1][y] == '1') {
+            destroyIsland(grid, x - 1, y);
+        }
+
+        if (x + 1 < grid.length && grid[x + 1][y] == '1') {
+            destroyIsland(grid, x + 1, y);
+        }
+
+        if (y - 1 >= 0 && grid[x][y - 1] == '1') {
+            destroyIsland(grid, x, y - 1);
+        }
+
+        if (y + 1 < grid[x].length && grid[x][y + 1] == '1') {
+            destroyIsland(grid, x, y + 1);
         }
     }
 
