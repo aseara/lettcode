@@ -86,7 +86,7 @@ class WordLadder {
 class Solution {
 
     public int ladderLength(String beginWord, String endWord, List<String> wordList) {
-        return path9(beginWord, endWord, wordList);
+        return path10(beginWord, endWord, wordList);
     }
 
     private int path1(String beginWord, String endWord, List<String> wordList) {
@@ -385,12 +385,15 @@ class Solution {
         return 0;
     }
 
-    // 双向BFS
+    // 双向BFS   当前最优实现 33ms
     private int path6(String beginWord, String endWord, List<String> wordList) {
         Map<String, Set<String>> wordMap = new HashMap<>();
         Map<String, List<String>> pathMap = new HashMap<>();
 
         for(String word : wordList) {
+            if (word.equals(beginWord)) {
+                continue;
+            }
             Set<String> words = new HashSet<>();
             wordMap.put(word, words);
             char[] arr = word.toCharArray();
@@ -634,6 +637,9 @@ class Solution {
                 for (int i = 0; i < length; i++) {
                     char temp = arr[i];
                     for (char j = 'a'; j <= 'z'; j++) {
+                        if (temp == j) {
+                            continue;
+                        }
                         arr[i] = j;
                         String nextWord = String.valueOf(arr);
                         if (meets.contains(nextWord)) {
@@ -658,5 +664,122 @@ class Solution {
     }
 
 
+
+    // 双向BFS
+    private int path10(String beginWord, String endWord, List<String> wordList) {
+        Map<String, Set<String>> wordMap = new HashMap<>();
+        Map<String, List<String>> pathMap = new HashMap<>();
+
+        for(String word : wordList) {
+            Set<String> words = new HashSet<>();
+            wordMap.put(word, words);
+            char[] arr = word.toCharArray();
+            for (int i = 0; i < word.length(); i++) {
+                char temp = arr[i];
+                arr[i] = '*';
+                String path = new String(arr);
+                arr[i] = temp;
+                List<String> pathWords = pathMap.get(path);
+                if (pathWords == null) {
+                    pathWords = new LinkedList<>();
+                    pathMap.put(path, pathWords);
+                } else {
+                    words.addAll(pathWords);
+                    for (String nextWord : pathWords) {
+                        wordMap.get(nextWord).add(word);
+                    }
+                }
+                pathWords.add(word);
+            }
+        }
+
+        if (!wordMap.containsKey(endWord)) {
+            return 0;
+        }
+
+        Set<String> beginSet = new HashSet<>();
+        char[] arr = beginWord.toCharArray();
+        for (int i = 0; i < beginWord.length(); i++) {
+            char temp = arr[i];
+            arr[i] = '*';
+            String pathWord = new String(arr);
+            arr[i] = temp;
+            List<String> words;
+            if ((words = pathMap.get(pathWord)) != null) {
+                beginSet.addAll(words);
+            }
+        }
+
+        Set<String> endSet = new HashSet<>();
+        endSet.add(endWord);
+
+        Set<String> meets = new HashSet<>(wordList);
+
+        int step = 1;
+        while (!beginSet.isEmpty() && !endSet.isEmpty()) {
+            step ++;
+            Set<String> temp = new HashSet<>();
+            for (String word : endSet) {
+                if (beginSet.contains(word)) {
+                    return step;
+                }
+                meets.remove(word);
+                for (String nextWord : wordMap.get(word)) {
+                    if (meets.contains(nextWord)) {
+                        temp.add(nextWord);
+                    }
+                }
+            }
+
+            if (temp.size() > beginSet.size()) {
+                endSet = temp;
+            } else {
+                endSet = beginSet;
+                beginSet = temp;
+            }
+        }
+
+        return 0;
+    }
+
+    private int path11(String beginWord, String endWord, List<String> wordList) {
+        if (wordList == null || wordList.size() == 0) return 0;
+        HashSet<String> start = new HashSet<>();
+        HashSet<String> end = new HashSet<>();
+        HashSet<String> dic = new HashSet<>(wordList);
+        start.add(beginWord);
+        end.add(endWord);
+        if (!dic.contains(endWord)) return 0;
+        return bfs(start, end, dic, 2);
+    }
+
+    private int bfs(HashSet<String> st, HashSet<String> ed, HashSet<String> dic, int l) {
+        //双端查找的时候，若是有任意一段出现了“断裂”，也就是说明不存在能够连上的路径，则直接返回0
+        if (st.size() == 0) return 0;
+        if (st.size() > ed.size()) {//双端查找，为了优化时间，永远用少的去找多的，比如开始的时候塞进了1000个，而结尾只有3个，则肯定是从少的那一端开始走比较好
+            return bfs(ed, st, dic, l);
+        }
+        //BFS的标记行为，即使用过的不重复使用
+        dic.removeAll(st);
+        //收集下一层临近点
+        HashSet<String> next = new HashSet<>();
+        for (String s : st) {
+            char[] arr = s.toCharArray();
+            for (int i = 0; i < arr.length; i++) {
+                char tmp = arr[i];
+                for (char c = 'a'; c <= 'z'; c++) {
+                    if (tmp == c) continue;
+                    arr[i] = c    ;
+                    String nstr = new String(arr);
+                    if (dic.contains(nstr)) {
+                        if (ed.contains(nstr)) return l;
+                        else next.add(nstr);
+                    }
+                }
+                arr[i] = tmp;
+            }
+        }
+        return bfs(next, ed, dic, l + 1);
+    }
 }
 //leetcode submit region end(Prohibit modification and deletion)
