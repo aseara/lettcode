@@ -86,7 +86,7 @@ class WordLadder {
 class Solution {
 
     public int ladderLength(String beginWord, String endWord, List<String> wordList) {
-        return path3(beginWord, endWord, wordList);
+        return path9(beginWord, endWord, wordList);
     }
 
     private int path1(String beginWord, String endWord, List<String> wordList) {
@@ -190,14 +190,6 @@ class Solution {
             String pathWord = word.substring(0, i) + '*' + word.substring(i + 1);
             map1.computeIfAbsent(word, k -> new LinkedList<>()).add(pathWord);
             map2.computeIfAbsent(pathWord, k -> new LinkedList<>()).add(word);
-        }
-    }
-
-    private void fillSetMap(Map<String, Set<String>> map1, Map<String, Set<String>> map2, String word) {
-        for (int i = 0; i < word.length(); i++) {
-            String pathWord = word.substring(0, i) + '*' + word.substring(i + 1);
-            map1.computeIfAbsent(word, k -> new HashSet<>()).add(pathWord);
-            map2.computeIfAbsent(pathWord, k -> new HashSet<>()).add(word);
         }
     }
 
@@ -323,12 +315,348 @@ class Solution {
         }
     }
 
-    // 双向BFS 超出时间限制
+    // 双向BFS
     private int path5(String beginWord, String endWord, List<String> wordList) {
+        Map<String, Set<String>> wordMap = new HashMap<>();
+        Map<String, List<String>> pathMap = new HashMap<>();
 
+        for(String word : wordList) {
+            Set<String> words = new HashSet<>();
+            wordMap.put(word, words);
+            for (int i = 0; i < word.length(); i++) {
+                String path = word.substring(0, i) + '*' + word.substring(i + 1);
+                List<String> pathWords = pathMap.get(path);
+                if (pathWords == null) {
+                    pathWords = new LinkedList<>();
+                    pathMap.put(path, pathWords);
+                } else {
+                    words.addAll(pathWords);
+                    for (String nextWord : pathWords) {
+                        wordMap.get(nextWord).add(word);
+                    }
+                }
+                pathWords.add(word);
+            }
+        }
+
+        if (!wordMap.containsKey(endWord)) {
+            return 0;
+        }
+
+        Set<String> beginSet = new HashSet<>();
+        for (int i = 0; i < beginWord.length(); i++) {
+            String pathWord = beginWord.substring(0, i) + '*' + beginWord.substring(i + 1);
+            List<String> words;
+            if ((words = pathMap.get(pathWord)) != null) {
+                beginSet.addAll(words);
+            }
+        }
+
+        Set<String> endSet = new HashSet<>();
+        endSet.add(endWord);
+
+        Set<String> visited = new HashSet<>();
+        visited.add(beginWord);
+        visited.add(endWord);
+
+        int step = 1;
+        while (!beginSet.isEmpty() && !endSet.isEmpty()) {
+            step ++;
+            Set<String> temp;
+            if (beginSet.size() < endSet.size()) {
+                temp = beginSet;
+                beginSet = endSet;
+                endSet = temp;
+            }
+            temp = new HashSet<>();
+            for (String word : endSet) {
+                if (beginSet.contains(word)) {
+                    return step;
+                }
+                for (String nextWord : wordMap.get(word)) {
+                    if (!visited.contains(nextWord)) {
+                        temp.add(nextWord);
+                    }
+                }
+            }
+            endSet = temp;
+        }
 
         return 0;
     }
+
+    // 双向BFS
+    private int path6(String beginWord, String endWord, List<String> wordList) {
+        Map<String, Set<String>> wordMap = new HashMap<>();
+        Map<String, List<String>> pathMap = new HashMap<>();
+
+        for(String word : wordList) {
+            Set<String> words = new HashSet<>();
+            wordMap.put(word, words);
+            char[] arr = word.toCharArray();
+            for (int i = 0; i < word.length(); i++) {
+                char temp = arr[i];
+                arr[i] = '*';
+                String path = new String(arr);
+                arr[i] = temp;
+                List<String> pathWords = pathMap.get(path);
+                if (pathWords == null) {
+                    pathWords = new LinkedList<>();
+                    pathMap.put(path, pathWords);
+                } else {
+                    words.addAll(pathWords);
+                    for (String nextWord : pathWords) {
+                        wordMap.get(nextWord).add(word);
+                    }
+                }
+                pathWords.add(word);
+            }
+        }
+
+        if (!wordMap.containsKey(endWord)) {
+            return 0;
+        }
+
+        Set<String> beginSet = new HashSet<>();
+        char[] arr = beginWord.toCharArray();
+        for (int i = 0; i < beginWord.length(); i++) {
+            char temp = arr[i];
+            arr[i] = '*';
+            String pathWord = new String(arr);
+            arr[i] = temp;
+            List<String> words;
+            if ((words = pathMap.get(pathWord)) != null) {
+                beginSet.addAll(words);
+            }
+        }
+
+        Set<String> endSet = new HashSet<>();
+        endSet.add(endWord);
+
+        Set<String> visited = new HashSet<>();
+        visited.add(beginWord);
+        visited.add(endWord);
+
+        int step = 1;
+        while (!beginSet.isEmpty() && !endSet.isEmpty()) {
+            step ++;
+            Set<String> temp;
+            if (beginSet.size() < endSet.size()) {
+                temp = beginSet;
+                beginSet = endSet;
+                endSet = temp;
+            }
+            temp = new HashSet<>();
+            for (String word : endSet) {
+                if (beginSet.contains(word)) {
+                    return step;
+                }
+                for (String nextWord : wordMap.get(word)) {
+                    if (!visited.contains(nextWord)) {
+                        temp.add(nextWord);
+                    }
+                }
+            }
+            endSet = temp;
+        }
+
+        return 0;
+    }
+
+    // 双向BFS 递归实现
+    private int path7(String beginWord, String endWord, List<String> wordList) {
+        Map<String, Set<String>> wordMap = new HashMap<>();
+        Map<String, List<String>> pathMap = new HashMap<>();
+
+        for(String word : wordList) {
+            Set<String> words = new HashSet<>();
+            wordMap.put(word, words);
+            char[] arr = word.toCharArray();
+            for (int i = 0; i < word.length(); i++) {
+                char temp = arr[i];
+                arr[i] = '*';
+                String path = new String(arr);
+                arr[i] = temp;
+                List<String> pathWords = pathMap.get(path);
+                if (pathWords == null) {
+                    pathWords = new LinkedList<>();
+                    pathMap.put(path, pathWords);
+                } else {
+                    words.addAll(pathWords);
+                    for (String nextWord : pathWords) {
+                        wordMap.get(nextWord).add(word);
+                    }
+                }
+                pathWords.add(word);
+            }
+        }
+
+        if (!wordMap.containsKey(endWord)) {
+            return 0;
+        }
+
+        Set<String> beginSet = new HashSet<>();
+        char[] arr = beginWord.toCharArray();
+        for (int i = 0; i < beginWord.length(); i++) {
+            char temp = arr[i];
+            arr[i] = '*';
+            String pathWord = new String(arr);
+            arr[i] = temp;
+            List<String> words;
+            if ((words = pathMap.get(pathWord)) != null) {
+                beginSet.addAll(words);
+            }
+        }
+
+        Set<String> endSet = new HashSet<>();
+        endSet.add(endWord);
+
+        Set<String> visited = new HashSet<>();
+        visited.add(endWord);
+
+        return getStep(wordMap, beginSet, endSet, visited, 1);
+    }
+
+    private int getStep(Map<String, Set<String>> wordMap,
+                        Set<String> beginSet, Set<String> endSet,
+                        Set<String> visited, int step) {
+
+        Set<String> temp = new HashSet<>();
+        for (String word : endSet) {
+            if (beginSet.contains(word)) {
+                return step + 1;
+            }
+            for (String nextWord : wordMap.get(word)) {
+                if (!visited.contains(nextWord)) {
+                    temp.add(nextWord);
+                }
+            }
+        }
+        if (temp.isEmpty()) {
+            return 0;
+        }
+
+        if (beginSet.size() < temp.size()) {
+            endSet = beginSet;
+            beginSet = temp;
+        } else {
+            endSet = temp;
+        }
+
+        return getStep(wordMap, beginSet, endSet, visited, step + 1);
+    }
+
+    // 双向BFS 使用 meets
+    private int path8(String beginWord, String endWord, List<String> wordList) {
+        // abc -> *bc, a*c, ab*
+        Map<String, Set<String>> map1 = new HashMap<>(wordList.size());
+        // *bc -> abc, bbc, cbc
+        Map<String, Set<String>> map2 = new HashMap<>(wordList.size() * 3);
+
+        for (String word : wordList) {
+            fillSetMap(map1, map2, word);
+        }
+        fillSetMap(map1, map2, beginWord);
+
+        if (!map1.containsKey(endWord)) {
+            return 0;
+        }
+
+        Set<String> meets = new HashSet<>(wordList);
+
+        Set<String> beginSet = new HashSet<>();
+        beginSet.add(beginWord);
+        Set<String> endSet = new HashSet<>();
+        endSet.add(endWord);
+
+        int step = 1;
+        while (!beginSet.isEmpty() && !endSet.isEmpty()) {
+            step ++;
+            Set<String> tempSet = new HashSet<>();
+            meets.removeAll(beginSet);
+            for (String word : beginSet) {
+                for (String path: map1.get(word)) {
+                    for (String nextWord : map2.get(path)) {
+                        if (meets.contains(nextWord)) {
+                            if (endSet.contains(nextWord)) {
+                                return step;
+                            }
+                            tempSet.add(nextWord);
+                        }
+                    }
+                }
+            }
+            if (endSet.size() < tempSet.size()) {
+                beginSet = tempSet;
+            } else {
+                beginSet = endSet;
+                endSet = tempSet;
+            }
+        }
+
+        return 0;
+    }
+
+    private void fillSetMap(Map<String, Set<String>> map1, Map<String, Set<String>> map2, String word) {
+        Set<String> paths = map1.computeIfAbsent(word, k -> new HashSet<>());
+        char[] arr = word.toCharArray();
+        for (int i = 0; i < word.length(); i++) {
+            char temp = arr[i];
+            arr[i] = '*';
+            String pathWord = String.valueOf(arr);
+            arr[i] = temp;
+            paths.add(pathWord);
+            map2.computeIfAbsent(pathWord, k -> new HashSet<>()).add(word);
+        }
+    }
+
+    // 双向BFS 使用 meets  按字符遍历
+    private int path9(String beginWord, String endWord, List<String> wordList) {
+        Set<String> meets = new HashSet<>(wordList);
+        if (!meets.contains(endWord)) {
+            return 0;
+        }
+        
+        int length = beginWord.length();
+        
+        Set<String> beginSet = new HashSet<>();
+        beginSet.add(beginWord);
+        Set<String> endSet = new HashSet<>();
+        endSet.add(endWord);
+
+        int step = 1;
+        while (!beginSet.isEmpty() && !endSet.isEmpty()) {
+            step ++;
+            Set<String> tempSet = new HashSet<>();
+            meets.removeAll(beginSet);
+            for (String word : beginSet) {
+                char[] arr = word.toCharArray();
+                for (int i = 0; i < length; i++) {
+                    char temp = arr[i];
+                    for (char j = 'a'; j <= 'z'; j++) {
+                        arr[i] = j;
+                        String nextWord = String.valueOf(arr);
+                        if (meets.contains(nextWord)) {
+                            if (endSet.contains(nextWord)) {
+                                return step;
+                            }
+                            tempSet.add(nextWord);
+                        }
+                    }
+                    arr[i] = temp;
+                }
+            }
+            if (endSet.size() < tempSet.size()) {
+                beginSet = tempSet;
+            } else {
+                beginSet = endSet;
+                endSet = tempSet;
+            }
+        }
+
+        return 0;
+    }
+
 
 }
 //leetcode submit region end(Prohibit modification and deletion)
