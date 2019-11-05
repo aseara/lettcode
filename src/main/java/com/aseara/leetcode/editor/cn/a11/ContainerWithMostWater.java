@@ -44,11 +44,8 @@ class Solution {
         for (int i = 0, j = height.length -1; i != j; ) {
             int minHeight = Math.min(height[i], height[j]);
             maxArea = Math.max(maxArea, (j - i) * minHeight);
-            if (height[i] > minHeight) {
-                while (height[j] <= minHeight && i != j) {
-                    j --;
-                }
-                continue;
+            while (height[j] <= minHeight && i != j) {
+                j --;
             }
             while (height[i] <= minHeight && i != j) {
                 i ++;
