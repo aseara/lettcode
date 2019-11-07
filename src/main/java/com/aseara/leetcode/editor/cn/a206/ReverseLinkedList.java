@@ -77,7 +77,7 @@ class ListNode {
  */
 class Solution {
     public ListNode reverseList(ListNode head) {
-        return recursive(head);
+        return recursive2(head);
     }
 
     private ListNode loop(ListNode head) {
@@ -106,6 +106,16 @@ class Solution {
         ListNode next = cur.next;
         cur.next = pre;
         return recursive(cur, next);
+    }
+
+    private ListNode recursive2(ListNode head) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+        ListNode p = recursive2(head.next);
+        head.next.next = head;
+        head.next = null;
+        return p;
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
