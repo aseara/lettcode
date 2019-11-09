@@ -41,8 +41,11 @@ package com.aseara.leetcode.editor.cn.a141;
 
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
- * desc: 环形链表 <br />
+ * desc: 141.环形链表 <br />
  * Date: 2019/10/20 <br/>
  *
  * @author qiujingde
@@ -52,7 +55,25 @@ class LinkedListCycle {
     
     @Test
     void test1() {
-    
+        assertFalse(solution.hasCycle(null));
+
+        ListNode node = new ListNode(1);
+        assertFalse(solution.hasCycle(node));
+
+        node.next = node;
+        assertTrue(solution.hasCycle(node));
+
+        ListNode head = new ListNode(3);
+        node = head.next = new ListNode(2);
+        node = node.next = new ListNode(0);
+        node = node.next = new ListNode(-4);
+        node.next = head.next;
+        assertTrue(solution.hasCycle(head));
+
+        head = new ListNode(1);
+        node = head.next = new ListNode(2);
+        node.next = head;
+        assertTrue(solution.hasCycle(head));
     }
     
 }
@@ -81,6 +102,20 @@ class ListNode {
  */
 class Solution {
     public boolean hasCycle(ListNode head) {
+        if (head == null) {
+            return false;
+        }
+
+        for (ListNode slow = head, fast = head.next;
+             // 到达结束节点，没有环
+             slow != null && fast != null && fast.next != null;
+             slow = slow.next, fast = fast.next.next) {
+            // fast 和 slow 重合， 有环
+            if (fast == slow || fast.next == slow) {
+                return true;
+            }
+        }
+
         return false;
     }
 }
