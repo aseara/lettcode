@@ -102,16 +102,16 @@ class ListNode {
  */
 class Solution {
     public boolean hasCycle(ListNode head) {
-        if (head == null) {
+        if (head == null  || head.next == null) {
             return false;
         }
 
-        for (ListNode slow = head, fast = head.next;
+        for (ListNode slow = head, fast = head.next.next;
              // 到达结束节点，没有环
              slow != null && fast != null && fast.next != null;
              slow = slow.next, fast = fast.next.next) {
             // fast 和 slow 重合， 有环
-            if (fast == slow || fast.next == slow) {
+            if (fast == slow) {
                 return true;
             }
         }
