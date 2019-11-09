@@ -164,5 +164,22 @@ class Solution {
         }
         return fast;
     }
+
+    private ListNode method4(ListNode head) {
+        ListNode fast = head;
+        ListNode slow = head;
+        for (; fast != null && fast.next != null; ) {
+            slow = slow.next;
+            fast = fast.next.next;
+            if (fast == slow) {
+                for (fast = head; fast != slow; ) {
+                    fast = fast.next;
+                    slow = slow.next;
+                }
+                return fast;
+            }
+        }
+        return null;
+    }
 }
 //leetcode submit region end(Prohibit modification and deletion)
