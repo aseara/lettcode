@@ -93,6 +93,7 @@ class Solution {
         if (len == 1) {
             return;
         }
+        k = k % len;
         int moves = 0;
         for (int i = 0; i < k; i++) {
             // 已经移动所有的节点
@@ -104,7 +105,7 @@ class Solution {
             int temp = nums[i];
             do {
                 // for i , shift pos i + k
-                int next = cur + k > len - 1 ? (cur + k) % len : cur + k;
+                int next = cur + k > len - 1 ? cur + k - len : cur + k;
 
                 int shift = nums[next];
                 nums[next] = temp;
