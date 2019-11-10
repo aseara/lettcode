@@ -40,6 +40,7 @@
 // Related Topics 链表 双指针
 package com.aseara.leetcode.editor.cn.a142;
 
+import com.aseara.leetcode.editor.cn.base.ListNode;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
@@ -80,15 +81,6 @@ class LinkedListCycleIi {
         assertEquals(head, solution.detectCycle(head));
     }
     
-}
-
-class ListNode {
-    int val;
-    ListNode next;
-    ListNode(int x) {
-        val = x;
-        next = null;
-    }
 }
 
 

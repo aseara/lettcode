@@ -12,12 +12,14 @@
 package com.aseara.leetcode.editor.cn.a24;
 
 
+import com.aseara.leetcode.editor.cn.base.ListNode;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.aseara.leetcode.editor.cn.base.ListNode.fromArr;
+import static com.aseara.leetcode.editor.cn.base.ListNode.toArr;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 /**
@@ -36,35 +38,7 @@ class SwapNodesInPairs {
         head = solution.swapPairs(head);
         assertIterableEquals(expected, toArr(head));
     }
-
-    private ListNode fromArr(List<Integer> arr) {
-        if (arr == null || arr.size() == 0) {
-            return null;
-        }
-        ListNode next = null;
-        ListNode head = null;
-        for (int i = arr.size() - 1; i >= 0; i--) {
-            head = new ListNode(arr.get(i));
-            head.next = next;
-            next = head;
-        }
-        return head;
-    }
-
-    private List<Integer> toArr(ListNode head) {
-        List<Integer> arr = new ArrayList<>();
-        for (ListNode next = head; next != null; next = next.next) {
-            arr.add(next.val);
-        }
-        return arr;
-    }
     
-}
-
-class ListNode {
-    int val;
-    ListNode next;
-    ListNode(int x) { val = x; }
 }
 
 //leetcode submit region begin(Prohibit modification and deletion)

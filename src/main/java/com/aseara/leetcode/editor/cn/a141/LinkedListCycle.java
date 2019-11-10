@@ -39,6 +39,7 @@
 // Related Topics 链表 双指针
 package com.aseara.leetcode.editor.cn.a141;
 
+import com.aseara.leetcode.editor.cn.base.ListNode;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -76,16 +77,6 @@ class LinkedListCycle {
         assertTrue(solution.hasCycle(head));
     }
     
-}
-
-
-class ListNode {
-    int val;
-    ListNode next;
-    ListNode(int x) {
-        val = x;
-        next = null;
-    }
 }
 
 //leetcode submit region begin(Prohibit modification and deletion)

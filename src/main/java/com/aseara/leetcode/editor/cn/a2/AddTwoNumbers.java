@@ -13,6 +13,7 @@
 // Related Topics 链表 数学
 package com.aseara.leetcode.editor.cn.a2;
 
+import com.aseara.leetcode.editor.cn.base.ListNode;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -26,15 +27,9 @@ class AddTwoNumbers {
     
     @Test
     void test1() {
-    
+
     }
     
-}
-
-class ListNode {
-    int val;
-    ListNode next;
-    ListNode(int x) { val = x; }
 }
 
 //leetcode submit region begin(Prohibit modification and deletion)
@@ -48,7 +43,25 @@ class ListNode {
  */
 class Solution {
     public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
-        return null;
+        return upAdd(l1, l2, 0);
+    }
+
+    private ListNode upAdd(ListNode l1, ListNode l2, int up) {
+        if (l1 == null) {
+            return l2;
+        }
+        if (l2 == null) {
+            return l1;
+        }
+
+        int val = l1.val + l2.val;
+        up = val > 10 ? 1 : 0;
+        val = val > 10 ? val - 10 : val;
+
+        ListNode node = new ListNode(val);
+        node.next = upAdd(l1.next, l2.next, up);
+
+        return node;
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
