@@ -14,7 +14,7 @@ public class ListNode {
     public ListNode next;
     public ListNode(int x) { val = x; }
 
-    public static ListNode fromArr(int[] nums) {
+    public static ListNode fromArr(int... nums) {
         if (nums == null || nums.length == 0) {
             return null;
         }
