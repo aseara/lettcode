@@ -23,6 +23,8 @@ package com.aseara.leetcode.editor.cn.a155;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.NoSuchElementException;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -52,7 +54,7 @@ class MinStackTest {
 class MinStack {
 
     private Node top = null;
-    private int min = Integer.MAX_VALUE;
+    private Node min = null;
 
     /** initialize your data structure here. */
     public MinStack() {
@@ -63,30 +65,33 @@ class MinStack {
         Node node = new Node(x);
         node.next = top;
         top = node;
-        min = Math.min(x, min);
+        if (min == null || x <= min.val) {
+            node = new Node(x);
+            node.next = min;
+            min = node;
+        }
     }
     
     public void pop() {
         Node tmp = top;
         top = top.next;
-        if (tmp.val == min) {
-            refreshMin();
+        if (tmp.val == min.val) {
+            min = min.next;
         }
     }
     
     public int top() {
+        if (top == null) {
+            throw new RuntimeException("栈已空！");
+        }
         return top.val;
     }
     
     public int getMin() {
-        return min;
-    }
-
-    private void refreshMin() {
-        min = Integer.MAX_VALUE;
-        for (Node node = top; node != null; node = node.next) {
-            min = Math.min(node.val, min);
+        if (min == null) {
+            throw new RuntimeException("栈已空！");
         }
+        return min.val;
     }
 
     private static class Node {
