@@ -16,6 +16,11 @@ package com.aseara.leetcode.editor.cn.a2;
 import com.aseara.leetcode.editor.cn.base.ListNode;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+
+import static com.aseara.leetcode.editor.cn.base.ListNode.toArr;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+
 /**
  * desc: 2.两数相加 <br />
  * Date: 2019/10/20 <br/>
@@ -27,7 +32,11 @@ class AddTwoNumbers {
     
     @Test
     void test1() {
+        ListNode l1 = ListNode.fromArr(new int[] {2, 4, 3});
+        ListNode l2 = ListNode.fromArr(new int[] {5, 6, 4});
 
+        assertIterableEquals(Arrays.asList(7, 0, 8),
+                toArr(solution.addTwoNumbers(l1, l2)));
     }
     
 }
@@ -47,16 +56,20 @@ class Solution {
     }
 
     private ListNode upAdd(ListNode l1, ListNode l2, int up) {
-        if (l1 == null) {
-            return l2;
-        }
-        if (l2 == null) {
-            return l1;
+        if (l1 == null && l2 == null) {
+            return up == 1 ? new ListNode(1) : null;
         }
 
-        int val = l1.val + l2.val;
-        up = val > 10 ? 1 : 0;
-        val = val > 10 ? val - 10 : val;
+        if (l1 == null) {
+            return up == 1 ? upAdd(new ListNode(1), l2, 0) : l2;
+        }
+        if (l2 == null) {
+            return up == 1 ? upAdd(l1, new ListNode(1), 0) : l1;
+        }
+
+        int val = l1.val + l2.val + up;
+        up = val > 9 ? 1 : 0;
+        val = val > 9 ? val - 10 : val;
 
         ListNode node = new ListNode(val);
         node.next = upAdd(l1.next, l2.next, up);
