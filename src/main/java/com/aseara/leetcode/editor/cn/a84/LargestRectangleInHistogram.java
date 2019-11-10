@@ -59,15 +59,16 @@ class Solution {
         }
 
         LinkedList<Node> stack = new LinkedList<>();
+        stack.push(new Node(-1, 0));
 
         int max = 0;
 
         for (int i = 0; i <= heights.length; i++) {
             int height = i == heights.length ? 0 : heights[i];
 
-            while (!stack.isEmpty() && stack.peek().height > height) {
+            while (stack.peek().height > height) {
                 int beforeHeight = stack.pop().height;
-                int left = stack.isEmpty() ? -1 : stack.peek().index;
+                int left = stack.peek().index;
                 max = Math.max(max, beforeHeight * (i - left - 1));
             }
 
