@@ -64,7 +64,7 @@ class RotateArray {
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
     public void rotate(int[] nums, int k) {
-        rotate3(nums, k);
+        rotate5(nums, k);
     }
 
     private void rotate1(int[] nums, int k) {
@@ -95,12 +95,8 @@ class Solution {
         }
         k = k % len;
         int moves = 0;
-        for (int i = 0; i < k; i++) {
+        for (int i = 0; moves != len; i++) {
             // 已经移动所有的节点
-            if (moves == len) {
-                return;
-            }
-
             int cur = i;
             int temp = nums[i];
             do {
@@ -114,7 +110,37 @@ class Solution {
 
                 cur = next;
             } while (cur > i);
+        }
+    }
 
+    private void rotate4(int[] nums, int k) {
+        k = k % nums.length;
+        if (k == 0) {
+            return;
+        }
+        int[] temp = new int[k];
+        System.arraycopy(nums, nums.length - k, temp, 0, k);
+        System.arraycopy(nums, 0, nums,  k,nums.length - k);
+        System.arraycopy(temp, 0, nums, 0, k);
+    }
+
+    private void rotate5(int[] nums, int k) {
+        k = k % nums.length;
+        if (k == 0) {
+            return;
+        }
+        int[] temp = new int[k];
+        reverse(nums, 0, nums.length - 1);
+        reverse(nums, 0, k - 1);
+        reverse(nums, k, nums.length - 1);
+    }
+
+    // 反转
+    private void reverse(int[] nums, int s, int e) {
+        for (; s < e; s++, e--) {
+            int temp = nums[s];
+            nums[s] = nums[e];
+            nums[e] = temp;
         }
     }
 
