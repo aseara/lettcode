@@ -71,16 +71,29 @@ class Solution {
         char[] chars1 = text1.toCharArray();
         char[] chars2 = text2.toCharArray();
 
-        return longestCommonSubsequence(chars1, chars2, 0, 0);
+        int[][] maxCache = new int[chars1.length][chars2.length];
+        for (int i = 0; i < chars1.length; i++) {
+            for (int j = 0; j < chars2.length; j++) {
+                maxCache[i][j] = -1;
+            }
+        }
+
+        return longestCommonSubsequence(chars1, chars2, 0, 0, true, maxCache);
     }
 
-    private int longestCommonSubsequence(char[] lChars, char[] sChars, int lStart, int sStart) {
+    private int longestCommonSubsequence(char[] lChars, char[] sChars, int lStart, int sStart,
+                                         boolean dir, int[][] maxCache) {
         if (lChars.length == lStart || sChars.length == sStart) {
             return 0;
         }
 
         if (lChars.length - lStart < sChars.length - sStart) {
-            return longestCommonSubsequence(sChars, lChars, sStart, lStart);
+            return longestCommonSubsequence(sChars, lChars, sStart, lStart, !dir, maxCache);
+        }
+
+        int cacheMax = dir ? maxCache[lStart][sStart] : maxCache[sStart][lStart];
+        if (cacheMax != -1) {
+            return cacheMax;
         }
 
         char c = sChars[sStart];
@@ -90,18 +103,27 @@ class Solution {
             find = lChars[nextStart] == c;
         }
 
+        int max;
+
         // 没有找到 c
         if (!find) {
-            return longestCommonSubsequence(lChars, sChars, lStart, sStart + 1);
+            max = longestCommonSubsequence(lChars, sChars, lStart, sStart + 1, dir, maxCache);
+        } else {
+            int max1 = longestCommonSubsequence(lChars, sChars, nextStart, sStart + 1, dir, maxCache);
+            if (max1 == sChars.length - sStart - 1 || nextStart == lStart + 1) {
+                max = max1 + 1;
+            } else {
+                max = Math.max(max1 + 1, longestCommonSubsequence(lChars, sChars, lStart, sStart + 1, dir, maxCache));
+            }
         }
 
-        int max1 = longestCommonSubsequence(lChars, sChars, nextStart, sStart + 1);
-        if (max1 == sChars.length - sStart - 1) {
-            return max1 + 1;
+        if (dir) {
+            maxCache[lStart][sStart] = max;
+        } else {
+            maxCache[sStart][lStart] = max;
         }
 
-        return Math.max(max1 + 1,
-                longestCommonSubsequence(lChars, sChars, lStart, sStart + 1));
+        return max;
     }
 
 }
