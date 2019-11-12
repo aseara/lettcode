@@ -44,30 +44,55 @@ class ClimbingStairs {
         assertEquals(5, solution.climbStairs(4));
         assertEquals(13, solution.climbStairs(6));
     }
-    
 }
 
 
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
     public int climbStairs(int n) {
-        if (n == 1) {
-            return 1;
+        if (n < 2) {
+            return n;
         }
-        if (n == 2) {
-            return 2;
+        int[] stairs = new int[] {1, 2};
+        int tmp;
+        for (int i = 3; i <= n; i++) {
+            tmp = stairs[1];
+            stairs[1] = stairs[0] + stairs[1];
+            stairs[0] = tmp;
         }
-        int a = 1;
-        int b = 2;
+        return stairs[1];
+    }
 
-        int result = 0;
-        for (int i = 2; i < n; i++) {
-            result = a + b;
-            a = b;
-            b = result;
+    /**
+     * 一次可以走1，2，3级台阶，相邻走法不能相同
+     * @param n 台阶数
+     * @return 可能的走法
+     */
+    public int climbStairs3(int n) {
+        int[][] cache = {
+                {1, 0, 1},
+                {0, 1, 1},
+                {1, 0, 1}};
+        if (n <= 3) {
+            return cache[0][n - 1] + cache[1][n - 1] + cache[2][n - 1];
         }
 
-        return result;
+        for (int i = 4; i <= n; i++) {
+            int s1 = cache[1][2] + cache[2][2];
+            int s2 = cache[0][1] + cache[2][1];
+            int s3 = cache[0][0] + cache[1][0];
+
+            for (int j = 0; j < 3; j++) {
+                cache[j][0] = cache[j][1];
+                cache[j][1] = cache[j][2];
+            }
+
+            cache[0][2] = s1;
+            cache[1][2] = s2;
+            cache[2][2] = s3;
+        }
+
+        return cache[0][2] + cache[1][2] + cache[2][2];
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
