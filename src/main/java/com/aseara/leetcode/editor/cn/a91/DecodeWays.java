@@ -43,7 +43,6 @@ class DecodeWays {
         assertEquals(3, solution.numDecodings("226"));
         assertEquals(1, solution.numDecodings("110"));
     }
-    
 }
 
 
