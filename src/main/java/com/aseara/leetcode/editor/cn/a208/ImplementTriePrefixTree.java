@@ -22,6 +22,9 @@ package com.aseara.leetcode.editor.cn.a208;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * desc: 208.实现 Trie (前缀树) <br />
  * Date: 2019/11/19 <br/>
@@ -77,6 +80,10 @@ class Trie {
         return node != null;
     }
 
+    public TrieNode getRoot() {
+        return root;
+    }
+
     private TrieNode getEndNode(String word) {
         char[] chars = word.toCharArray();
         TrieNode node = root;
@@ -87,24 +94,20 @@ class Trie {
     }
 
     static class TrieNode {
-        private TrieNode[] links = new TrieNode[26];
+        private Map<Character, TrieNode> links = new HashMap<>();
 
         private boolean isEnd;
 
         public TrieNode computeIfAbsent(char c) {
-            TrieNode node = getNode(c);
-            if (node == null) {
-                setNode(c, new TrieNode());
-            }
-            return getNode(c);
+            return links.computeIfAbsent(c, k -> new TrieNode());
         }
 
         public TrieNode getNode(char c) {
-            return links[c - 'a'];
+            return links.get(c);
         }
 
         public void setNode(char c, TrieNode node) {
-            links[c - 'a'] = node;
+            links.put(c, node);
         }
 
         public boolean isEnd() {
