@@ -31,11 +31,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
@@ -82,62 +80,42 @@ class Solution {
 
         Trie.TrieNode root = trie.getRoot();
 
-        Map<Character, List<Cor>> corMap = new HashMap<>();
+        List<String> result = new LinkedList<>();
+
         // 遍历二维矩阵
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[0].length; j++) {
-                corMap.computeIfAbsent(board[i][j], c -> new LinkedList<>())
-                        .add(new Cor(i, j));
+                backtrace(board, root.getNode(board[i][j]), new Cor(i, j), "", result);
             }
         }
 
-        List<String> result = new LinkedList<>();
-        LinkedList<Character> charStack = new LinkedList<>();
-
-        List<Character> links = root.getLinks();
-        for (char c : links) {
-            List<Cor> cors = corMap.get(c);
-            Trie.TrieNode nextNode = root.getNode(c);
-            if (cors != null) {
-                for (Cor nextCor : cors) {
-                    backtrace(board, nextNode, nextCor, charStack, result);
-                }
-            }
-        }
         return result;
     }
 
     private void backtrace(char[][] board, Trie.TrieNode node, Cor cor,
-                           LinkedList<Character> charStack,
-                           List<String> result) {
+                           String curWord, List<String> result) {
+        if (node == null) {
+            return;
+        }
+
         char c = board[cor.x][cor.y];
         board[cor.x][cor.y] = 0;
-        charStack.add(c);
+        curWord = curWord + c;
 
         if (node.isEnd()) {
-            result.add(toString(charStack));
+            result.add(curWord);
             node.setEnd(false);
         }
 
         List<Cor> nextCors = cor.getNeighbors(board.length, board[0].length);
         for (Cor nextCor: nextCors) {
             char nextC = board[nextCor.x][nextCor.y];
-            Trie.TrieNode nextNode;
-            if (nextC != 0 && (nextNode = node.getNode(nextC)) != null) {
-                backtrace(board, nextNode, nextCor, charStack, result);
+            if (nextC != 0) {
+                backtrace(board, node.getNode(nextC), nextCor, curWord, result);
             }
         }
 
-        charStack.removeLast();
         board[cor.x][cor.y] = c;
-    }
-
-    private String toString(LinkedList<Character> charStack) {
-        StringBuilder sb = new StringBuilder();
-        for (Character c : charStack) {
-            sb.append(c);
-        }
-        return sb.toString();
     }
 }
 
@@ -145,12 +123,12 @@ class Cor {
     final int x;
     final int y;
 
-    public Cor(int x, int y) {
+    Cor(int x, int y) {
         this.x = x;
         this.y = y;
     }
 
-    public List<Cor> getNeighbors(int maxX, int maxY) {
+    List<Cor> getNeighbors(int maxX, int maxY) {
         List<Cor> nextCors = new LinkedList<>();
         // 上
         if (x - 1 >= 0) {
@@ -177,12 +155,12 @@ class Trie {
     private TrieNode root;
 
     /** Initialize your data structure here. */
-    public Trie() {
+    Trie() {
         root = new TrieNode();
     }
 
     /** Inserts a word into the trie. */
-    public void insert(String word) {
+    void insert(String word) {
         char[] chars = word.toCharArray();
         TrieNode node = root;
         for (char c : chars) {
@@ -191,41 +169,24 @@ class Trie {
         node.setEnd(true);
     }
 
-    /** Returns if the word is in the trie. */
-    public boolean search(String word) {
-        TrieNode node = getEndNode(word);
-        return node != null && node.isEnd();
-    }
-
     public TrieNode getRoot() {
         return root;
     }
 
-    private TrieNode getEndNode(String word) {
-        char[] chars = word.toCharArray();
-        TrieNode node = root;
-        for (int i = 0; i < chars.length && node != null; i++) {
-            node = node.getNode(chars[i]);
-        }
-        return node;
-    }
-
     static class TrieNode {
         private TrieNode[] links = new TrieNode[26];
-        private List<Character> linkChars = new LinkedList<>();
 
         private boolean isEnd;
 
-        public TrieNode computeIfAbsent(char c) {
+        TrieNode computeIfAbsent(char c) {
             TrieNode node = getNode(c);
             if (node == null) {
                 setNode(c, new TrieNode());
-                linkChars.add(c);
             }
             return getNode(c);
         }
 
-        public TrieNode getNode(char c) {
+        TrieNode getNode(char c) {
             return links[c - 'a'];
         }
 
@@ -239,10 +200,6 @@ class Trie {
 
         public void setEnd(boolean end) {
             isEnd = end;
-        }
-
-        public List<Character> getLinks() {
-            return linkChars;
         }
     }
 }
