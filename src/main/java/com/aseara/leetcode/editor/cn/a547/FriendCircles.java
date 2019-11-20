@@ -37,9 +37,6 @@ package com.aseara.leetcode.editor.cn.a547;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -85,66 +82,47 @@ class Solution {
         }
 
         int m = M.length;
-        int n = M[0].length;
 
         DisjointSet disjointSet = new DisjointSet(m);
         for (int i = 0; i < m - 1; i++) {
-            for (int j = i + 1; j < n; j++) {
-                GroupSet iSet = disjointSet.get(i);
-                GroupSet jSet = disjointSet.get(j);
-                if (iSet.set != jSet.set && M[i][j] == 1) {
+            for (int j = i + 1; j < m; j++) {
+                if (M[i][j] == 1) {
                     disjointSet.join(i, j);
                 }
             }
         }
-        return disjointSet.groupSize();
+        return disjointSet.count;
     }
 }
 
 class DisjointSet {
-    GroupSet[] groupSets;
-
-    Set<Integer> sets = new HashSet<>();
+    int count;
+    private int[] parent;
 
     DisjointSet(int size) {
-        groupSets = new GroupSet[size];
+        count = size;
+        parent = new int[size];
+        for (int i = 1; i < size; i++) {
+            parent[i] = i;
+        }
     }
 
-    GroupSet get(int i) {
-        if (groupSets[i] == null) {
-            groupSets[i] = new GroupSet(i);
-            sets.add(i);
+    private int find(int i) {
+        while (i != parent[i]) {
+            parent[i] = parent[parent[i]];
+            i = parent[i];
         }
-        return groupSets[i];
+        return i;
     }
 
     void join(int i, int j) {
-        if (get(i).rep > get(j).rep) {
-            join(j, i);
-            return;
-        }
-        Set<Integer> iSet = get(i).set;
-        Set<Integer> jSet = get(j).set;
-
-        if (iSet != jSet) {
-            iSet.addAll(jSet);
-            sets.remove(get(j).rep);
-            get(j).rep = get(i).rep;
-            get(j).set = iSet;
+        int pi = find(i);
+        int pj = find(j);
+        if (pi != pj) {
+            parent[pj] = pi;
+            count--;
         }
     }
-
-    int groupSize() {
-        return sets.size();
-    }
-}
-
-class GroupSet {
-    int rep;
-    GroupSet(int rep) {
-        this.rep = rep;
-    }
-    Set<Integer> set = new HashSet<>();
 }
 
 //leetcode submit region end(Prohibit modification and deletion)
