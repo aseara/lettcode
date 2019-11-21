@@ -52,7 +52,7 @@ class Solution {
             return Collections.emptyList();
         }
         List<String> result = new LinkedList<>();
-        dfs("", n, n, result);
+        dfs("(", n - 1, n, result);
         return result;
     }
 
