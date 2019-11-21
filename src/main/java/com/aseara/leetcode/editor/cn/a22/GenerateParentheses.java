@@ -41,7 +41,6 @@ class GenerateParentheses {
         expected = new HashSet<>(Arrays.asList("(())", "()()"));
         assertIterableEquals(expected, new HashSet<>(solution.generateParenthesis(2)));
     }
-    
 }
 
 
@@ -52,19 +51,19 @@ class Solution {
             return Collections.emptyList();
         }
         List<String> result = new LinkedList<>();
-        dfs("(", n - 1, n, result);
+        dfs("(", n - 1, n - 1, result);
         return result;
     }
 
     private void dfs(String prefix, int left, int right, List<String> result) {
         if (left == 0 && right == 0) {
-            result.add(prefix);
+            result.add(prefix + ")");
             return;
         }
         if (left > 0) {
             dfs(prefix + "(", left - 1, right, result);
         }
-        if (right > left) {
+        if (right + 1 > left) {
             dfs(prefix + ")", left, right - 1, result);
         }
     }
