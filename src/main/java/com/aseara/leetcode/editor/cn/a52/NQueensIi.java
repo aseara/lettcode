@@ -29,6 +29,7 @@ package com.aseara.leetcode.editor.cn.a52;
 import org.junit.jupiter.api.Test;
 
 import java.util.LinkedList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -53,13 +54,12 @@ class NQueensIi {
 
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
-    private int count = 0;
 
     public int totalNQueens(int n) {
-        count = 0;
         if (n < 1) {
-            return count;
+            return 0;
         }
+        AtomicInteger counter = new AtomicInteger(0);
         boolean[] col = new boolean[n];
         // 撇
         boolean[] left = new boolean[2 * n];
@@ -67,15 +67,16 @@ class Solution {
         boolean[] right = new boolean[2 * n];
         // 位置记录
         LinkedList<Integer> stack = new LinkedList<>();
-        dfs(0, stack, n, col, left, right);
-        return count;
+        dfs(0, stack, n, col, left, right, counter);
+        return counter.get();
     }
 
     private void dfs(int row, LinkedList<Integer> stack, int n,
-                     boolean[] col, boolean[] left, boolean[] right) {
+                     boolean[] col, boolean[] left, boolean[] right,
+                     AtomicInteger counter) {
         if (row == n) {
             // 遍历完成，合法数据
-            count ++;
+            counter.getAndIncrement();
             return;
         }
         for (int i = 0; i < n; i++) {
@@ -85,7 +86,7 @@ class Solution {
                 left[i - row + n] = true;
                 right[i + row] = true;
 
-                dfs(row + 1, stack, n, col, left, right);
+                dfs(row + 1, stack, n, col, left, right, counter);
 
                 right[i + row] = false;
                 left[i - row + n] = false;
