@@ -107,22 +107,22 @@ class ValidSudoku {
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
     public boolean isValidSudoku(char[][] board) {
-        boolean[][] check = new boolean[27][9];
+        int[] check = new int[27];
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
                 if (board[i][j] != '.') {
-                    boolean[] row = check[i];
-                    boolean[] col = check[9 + j];
-                    boolean[] cor = check[18 + (i / 3) * 3 + j / 3];
+                    int num = 1 << (board[i][j] - '1');
 
-                    int num = board[i][j] - '1';
-                    if (row[num] || col[num] || cor[num]) {
+                    int col = 9 + j;
+                    int box = 18 + (i / 3) * 3 + j / 3;
+
+                    if (((check[i] | check[col] | check[box]) & num) > 0) {
                         return false;
                     }
 
-                    row[num] = true;
-                    col[num] = true;
-                    cor[num] = true;
+                    check[i] |= num;
+                    check[col] |= num;
+                    check[box] |= num;
                 }
             }
         }
