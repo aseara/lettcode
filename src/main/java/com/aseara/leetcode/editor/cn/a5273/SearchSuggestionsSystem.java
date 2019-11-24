@@ -1,45 +1,42 @@
-//在柠檬水摊上，每一杯柠檬水的售价为 5 美元。 
+//给你一个产品数组 products 和一个字符串 searchWord ，products 数组中每个产品都是一个字符串。 
 //
-// 顾客排队购买你的产品，（按账单 bills 支付的顺序）一次购买一杯。 
+// 请你设计一个推荐系统，在依次输入单词 searchWord 的每一个字母后，推荐 products 数组中前缀与 searchWord 相同的最多三个产品。如果前缀相同的可推荐产品超过三个，请按字典序返回最小的三个。 
 //
-// 每位顾客只买一杯柠檬水，然后向你付 5 美元、10 美元或 20 美元。你必须给每个顾客正确找零，也就是说净交易是每位顾客向你支付 5 美元。 
+// 请你以二维列表的形式，返回在输入 searchWord 每个字母后相应的推荐产品的列表。 
 //
-// 注意，一开始你手头没有任何零钱。 
-//
-// 如果你能给每位顾客正确找零，返回 true ，否则返回 false 。 
+// 
 //
 // 示例 1： 
 //
-// 输入：[5,5,5,10,20]
-//输出：true
-//解释：
-//前 3 位顾客那里，我们按顺序收取 3 张 5 美元的钞票。
-//第 4 位顾客那里，我们收取一张 10 美元的钞票，并返还 5 美元。
-//第 5 位顾客那里，我们找还一张 10 美元的钞票和一张 5 美元的钞票。
-//由于所有客户都得到了正确的找零，所以我们输出 true。
+// 输入：products = ["mobile","mouse","moneypot","monitor","mousepad"], searchWord = "mouse"
+//输出：[
+//["mobile","moneypot","monitor"],
+//["mobile","moneypot","monitor"],
+//["mouse","mousepad"],
+//["mouse","mousepad"],
+//["mouse","mousepad"]
+//]
+//解释：按字典序排序后的产品列表是 ["mobile","moneypot","monitor","mouse","mousepad"]
+//输入 m 和 mo，由于所有产品的前缀都相同，所以系统返回字典序最小的三个产品 ["mobile","moneypot","monitor"]
+//输入 mou， mous 和 mouse 后系统都返回 ["mouse","mousepad"]
 // 
 //
 // 示例 2： 
 //
-// 输入：[5,5,10]
-//输出：true
+// 输入：products = ["havana"], searchWord = "havana"
+//输出：[["havana"],["havana"],["havana"],["havana"],["havana"],["havana"]]
 // 
 //
 // 示例 3： 
 //
-// 输入：[10,10]
-//输出：false
+// 输入：products = ["bags","baggage","banner","box","cloths"], searchWord = "bags"
+//输出：[["baggage","bags","banner"],["baggage","bags","banner"],["baggage","bags"],["bags"]]
 // 
 //
 // 示例 4： 
 //
-// 输入：[5,5,10,10,20]
-//输出：false
-//解释：
-//前 2 位顾客那里，我们按顺序收取 2 张 5 美元的钞票。
-//对于接下来的 2 位顾客，我们收取一张 10 美元的钞票，然后返还 5 美元。
-//对于最后一位顾客，我们无法退回 15 美元，因为我们现在只有两张 10 美元的钞票。
-//由于不是每位顾客都得到了正确的找零，所以答案是 false。
+// 输入：products = ["havana"], searchWord = "tatiana"
+//输出：[[],[],[],[],[],[],[]]
 // 
 //
 // 
@@ -47,28 +44,28 @@
 // 提示： 
 //
 // 
-// 0 <= bills.length <= 10000 
-// bills[i] 不是 5 就是 10 或是 20 
+// 1 <= products.length <= 1000 
+// 1 <= Σ products[i].length <= 2 * 10^4 
+// products[i] 中所有的字符都是小写英文字母。 
+// 1 <= searchWord.length <= 1000 
+// searchWord 中所有字符都是小写英文字母。 
 // 
-// Related Topics 贪心算法
-package com.aseara.leetcode.editor.cn.execises;
+// Related Topics 字符串
+package com.aseara.leetcode.editor.cn.a5273;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
- * desc: 860.柠檬水找零 <br />
- * Date: 2019/11/3 <br/>
+ * desc: 5273.搜索推荐系统 <br />
+ * Date: 2019/11/24 <br/>
  *
  * @author qiujingde
  */
-class LemonadeChange {
+class SearchSuggestionsSystem {
     private Solution solution = new Solution();
     
     @Test
@@ -79,186 +76,102 @@ class LemonadeChange {
     
 }
 
-class TreeNode {
-    int val;
-    TreeNode left;
-    TreeNode right;
-    TreeNode(int x) { val = x; }
-}
-
 
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
-    public int minTimeToVisitAllPoints(int[][] points) {
-        if (points == null || points.length < 2) {
-            return 0;
-        }
-        int time = 0;
-
-        for (int i = 1; i < points.length; i++) {
-            int x = Math.abs(points[i][0] - points[i - 1][0]);
-            int y = Math.abs(points[i][1] - points[i - 1][1]);
-
-            time += Math.max(x, y);
-        }
-
-        return time;
-    }
-
-    public int countServers(int[][] grid) {
-        if (grid == null || grid.length == 0
-                || grid[0] == null || grid[0].length == 0) {
-            return 0;
-        }
-        Set<Integer> sets = new HashSet<>();
-
-        LinkedList<Integer> stack = new LinkedList<>();
-        int m = grid.length;
-        int n = grid[0].length;
-
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                if (grid[i][j] == 1) {
-                    stack.push(i * n + j);
-                }
-            }
-            if (stack.size() > 1) {
-                sets.addAll(stack);
-            }
-            stack.clear();
-        }
-
-        for (int j = 0; j < n; j++) {
-            for (int i = 0; i < m; i++  ) {
-                if (grid[i][j] == 1) {
-                    stack.push(i * n + j);
-                }
-            }
-            if (stack.size() > 1) {
-                sets.addAll(stack);
-            }
-            stack.clear();
-        }
-
-        return sets.size();
-    }
-
     public List<List<String>> suggestedProducts(String[] products, String searchWord) {
         Trie trie = new Trie();
-        for(String pro : products) {
-            trie.insert(pro);
+        for (String product: products) {
+            trie.insert(product);
         }
+        return trie.suggest(searchWord, 3);
+    }
+}
 
+class Trie {
+
+    private TrieNode root = new TrieNode();
+
+    public void insert(String word) {
+        if (word == null || word.length() == 0) {
+            return;
+        }
+        TrieNode node = root;
+        for (char c : word.toCharArray()) {
+            node = node.link(c);
+        }
+        node.setEnd();
+    }
+
+    List<List<String>> suggest(String word, int n) {
         List<List<String>> result = new LinkedList<>();
 
-        char[] search = searchWord.toCharArray();
+        TrieNode node = root;
         String pre = "";
-        for (int i = 0; i < search.length; i++) {
-            pre += search[i];
-
-            result.add(trie.getSuggest(pre, 3));
+        for (char c : word.toCharArray()) {
+            pre += c;
+            node = node == null ? null : node.getNode(c);
+            result.add(suggest(node, pre, n));
         }
 
         return result;
     }
 
-    private static class Trie {
-        private TrieNode root;
+    private List<String> suggest(TrieNode node, String pre, int n) {
+        if (node == null) {
+            return Collections.emptyList();
+        }
+        List<String> result = new LinkedList<>();
+        dfs(node, pre, result, n);
+        return result;
+    }
 
-        public Trie() {
-            root = new TrieNode();
+    private void dfs (TrieNode node, String pre, List<String> store, int n) {
+        if (store.size() == n || node == null) {
+            return;
         }
 
-        public void insert(String word) {
-            char[] chars = word.toCharArray();
-            TrieNode node = root;
-            for (char c : chars) {
-                node = node.computeIfAbsent(c);
-            }
-            node.setEnd();
+        for (int i = 0; i < node.wordCnt && store.size() < n; i++) {
+            store.add(pre);
         }
 
-        public boolean search(String word) {
-            TrieNode node = getEndNode(word);
-            return node != null && node.isEnd();
-        }
-
-        public TrieNode getRoot() {
-            return root;
-        }
-
-        private TrieNode getEndNode(String word) {
-            char[] chars = word.toCharArray();
-            TrieNode node = root;
-            for (int i = 0; i < chars.length && node != null; i++) {
-                node = node.getNode(chars[i]);
-            }
-            return node;
-        }
-
-        private List<String> getSuggest(String pre, int n) {
-            TrieNode node = getEndNode(pre);
-            List<String> result = new LinkedList<>();
-
-            if (node != null) {
-                dfs(node, pre, result, n);
-            }
-
-            return result;
-        }
-
-        private void dfs(TrieNode node, String pre, List<String> result, int n) {
-            if (node == null || result.size() == n) {
-                return;
-            }
-            if (node.isEnd()) {
-                for (int i = 0; i < node.end && n > 0; i++) {
-                    result.add(pre);
-                    n --;
-                }
-            }
-            for (char c = 'a'; c <= 'z' && result.size() < n; c++) {
-                TrieNode next = node.getNode(c);
-                dfs(next, pre + c, result, n);
-            }
-        }
-
-
-        static class TrieNode {
-            private TrieNode[] links = new TrieNode[26];
-
-            private int end;
-
-            TrieNode computeIfAbsent(char c) {
-                TrieNode node = getNode(c);
-                if (node == null) {
-                    setNode(c, new TrieNode());
-                }
-                return getNode(c);
-            }
-
-            TrieNode getNode(char c) {
-                return links[c - 'a'];
-            }
-
-            private void setNode(char c, TrieNode node) {
-                links[c - 'a'] = node;
-            }
-
-            public boolean isEnd() {
-                return end != 0;
-            }
-
-            public int getEnd() {
-                return end;
-            }
-
-            public void setEnd() {
-                end ++;
-            }
+        for (char i = 'a'; i <= 'z' && store.size() < n; i++) {
+            dfs(node.getNode(i), pre + i, store, n);
         }
     }
 
+    private TrieNode startWith(String pre) {
+        if (pre == null || pre.length() == 0) {
+            return null;
+        }
+        TrieNode node = root;
+        char[] chars = pre.toCharArray();
+        for (int i = 0; i < chars.length && node != null; i++) {
+            node = node.getNode(chars[i]);
+        }
+        return node;
+    }
 
+    static class TrieNode {
+        TrieNode[] links = new TrieNode[26];
+
+        int wordCnt;
+
+        TrieNode getNode(char a) {
+            return links[a - 'a'];
+        }
+
+        TrieNode link(char c) {
+            int index = c - 'a';
+            if (links[index] == null) {
+                links[index] = new TrieNode();
+            }
+            return links[index];
+        }
+
+        void setEnd() {
+            wordCnt ++;
+        }
+    }
 }
 //leetcode submit region end(Prohibit modification and deletion)
