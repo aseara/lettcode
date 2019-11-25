@@ -50,14 +50,8 @@ class CountingBits {
 class Solution {
     public int[] countBits(int num) {
         int[] result = new int[num + 1];
-        int n = 1;
-        int m = n << 1;
         for (int i = 1; i <= num; i++) {
-            if (i == m) {
-                n = m;
-                m = n << 1;
-            }
-            result[i] = result[i ^ n] + 1;
+            result[i] += result[i & (i - 1)] + 1;
         }
         return result;
     }
