@@ -59,6 +59,10 @@ class Solution {
         if (n < 1) {
             return 0;
         }
+        return method2(n);
+    }
+
+    private int method1(int n) {
         AtomicInteger counter = new AtomicInteger(0);
         boolean[] col = new boolean[n];
         // 撇
@@ -95,5 +99,24 @@ class Solution {
             }
         }
     }
+
+    private int method2(int n) {
+        return dfs2(0, 0, 0, 0, n);
+    }
+
+    private int dfs2(int row, int cols, int pl, int pr, int n) {
+        if (row == n) {
+            return 1;
+        }
+        int cnt = 0;
+        int pos = (~(cols | pl | pr)) & ((1 << n) - 1);
+        while (pos != 0) {
+            int p = pos & (-pos);
+            pos = pos & (pos - 1);
+            cnt += dfs2(row + 1, cols | p, (pl | p) << 1, (pr | p) >> 1, n);
+        }
+        return cnt;
+    }
+
 }
 //leetcode submit region end(Prohibit modification and deletion)

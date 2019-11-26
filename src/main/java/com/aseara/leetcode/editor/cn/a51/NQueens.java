@@ -58,6 +58,10 @@ class Solution {
         if (n < 1) {
             return null;
         }
+        return method2(n);
+    }
+
+    private List<List<String>> method1(int n) {
         List<List<String>> resultStore = new LinkedList<>();
 
         // init chars
@@ -107,6 +111,46 @@ class Solution {
     private List<String> to2D(char[] chars, List<Integer> result) {
         List<String> results = new LinkedList<>();
         for (int index : result) {
+            chars[index] = 'Q';
+            results.add(new String(chars));
+            chars[index] = '.';
+        }
+        return results;
+    }
+
+    private List<List<String>> method2(int n) {
+        List<List<String>> store = new LinkedList<>();
+        LinkedList<Integer> stack = new LinkedList<>();
+
+        // init chars
+        char[] chars = new char[n];
+        Arrays.fill(chars, '.');
+
+        dfs2(n, 0, 0, 0, 0, store, stack, chars);
+
+        return store;
+    }
+
+    private void dfs2(int n, int row, int cols, int pl, int pr, List<List<String>> store, LinkedList<Integer> stack,
+                      char[] chars) {
+        if (row == n) {
+            store.add(to2D2(chars, stack));
+        }
+        int pos = (~(cols | pl | pr)) & ((1 << n) - 1);
+        while (pos != 0) {
+            int p = pos & (-pos);
+            pos = pos & (pos - 1);
+            stack.add(p);
+            dfs2(n, row + 1, cols | p, (pl | p) << 1, (pr | p) >> 1, store, stack, chars);
+            stack.removeLast();
+        }
+    }
+
+    private List<String> to2D2(char[] chars, List<Integer> result) {
+        List<String> results = new LinkedList<>();
+        int n = chars.length;
+        for (int p : result) {
+            int index = n - 1 - Integer.numberOfTrailingZeros(p);
             chars[index] = 'Q';
             results.add(new String(chars));
             chars[index] = '.';
