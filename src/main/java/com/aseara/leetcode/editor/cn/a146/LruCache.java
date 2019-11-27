@@ -48,7 +48,6 @@ class LruCacheTest {
         System.out.println(cache.get(3));    // 3
         System.out.println(cache.get(4));
     }
-    
 }
 
 
@@ -57,11 +56,10 @@ class LRUCache {
 
     private Map<Integer, Node> map = new HashMap<>();
     private Deque deque = new Deque();
-    private int size;
-    private final int capacity;
+    private int remain;
 
     public LRUCache(int capacity) {
-        this.capacity = capacity;
+        this.remain = capacity;
     }
     
     public int get(int key) {
@@ -78,8 +76,8 @@ class LRUCache {
         node = new Node(key, value);
         deque.add(node);
         map.put(key, node);
-        if (size < capacity) {
-            size ++;
+        if (remain > 0) {
+            remain --;
             return;
         }
         Node remove = deque.remove();
@@ -91,57 +89,41 @@ class LRUCache {
         if (node == null) {
             return null;
         }
-        if (node != deque.head) {
-            deque.remove(node);
-            deque.add(node);
-        }
+        deque.remove(node);
+        deque.add(node);
         return node;
     }
 
     static class Deque {
-        Node head;
-        Node tail;
+        Node head = new Node(0, 0);
+        Node tail = new Node(0, 0);
+
+        Deque() {
+            tail.pre = head;
+            head.next = tail;
+        }
 
         void add(Node node) {
-            node.pre = null;
-            node.next = head;
-            if (head != null) {
-                head.pre = node;
-            }
-            head = node;
-            if (tail == null) {
-                tail = node;
-            }
+            node.pre = head;
+            node.next = head.next;
+            head.next.pre = node;
+            head.next = node;
         }
 
         void remove(Node node) {
             Node pre = node.pre;
             Node next = node.next;
-            if (pre != null) {
-                pre.next = next;
-            }
-            if (next != null) {
-                next.pre = pre;
-            }
-            if (node == head) {
-                head = next;
-            }
-            if (node == tail) {
-                tail = pre;
-            }
+            pre.next = next;
+            next.pre = pre;
         }
 
         Node remove() {
-            if (tail == null) {
+            if (tail.pre == head) {
                 return null;
             }
-            Node result = tail;
-            Node pre = tail.pre;
-            tail.pre = null;
-            if (pre != null) {
-                pre.next = null;
-            }
-            tail = pre;
+            tail.pre.next = tail;
+            Node result = tail.pre;
+            tail.pre = result.pre;
             return result;
         }
     }
