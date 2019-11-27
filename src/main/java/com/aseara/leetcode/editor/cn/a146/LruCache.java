@@ -47,6 +47,25 @@ class LruCacheTest {
         System.out.println(cache.get(1));    // -1
         System.out.println(cache.get(3));    // 3
         System.out.println(cache.get(4));
+
+
+        cache = new LRUCache( 3 );
+        cache.put(1, 1);
+        cache.put(2, 2);
+        cache.put(3, 3);
+        cache.put(4, 4);
+
+        System.out.println(cache.get(4));    // 4
+        System.out.println(cache.get(3));    // 3
+        System.out.println(cache.get(2));    // 2
+        System.out.println(cache.get(1));    // -1
+
+        cache.put(5, 5);
+        System.out.println(cache.get(1));    // -1
+        System.out.println(cache.get(2));    // 2
+        System.out.println(cache.get(3));    // 3
+        System.out.println(cache.get(4));    // -1
+        System.out.println(cache.get(5));    // 5
     }
 }
 
@@ -121,8 +140,8 @@ class LRUCache {
             if (tail.pre == head) {
                 return null;
             }
-            tail.pre.next = tail;
             Node result = tail.pre;
+            result.pre.next = tail;
             tail.pre = result.pre;
             return result;
         }
