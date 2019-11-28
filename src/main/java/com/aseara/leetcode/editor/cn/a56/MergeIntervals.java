@@ -42,6 +42,10 @@ class MergeIntervals {
         int[][] intervals2 = {{1,4},{4,5}};
         int[][] expected2 = {{1,5}};
         assertArrayEquals(expected2, solution.merge(intervals2));
+
+        int[][] intervals3 = {{2,3},{4,6},{5,7},{3,4}};
+        int[][] expected3 = {{2,7}};
+        assertArrayEquals(expected3, solution.merge(intervals3));
     }
     
 }
@@ -50,7 +54,7 @@ class MergeIntervals {
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
     public int[][] merge(int[][] intervals) {
-        return merge1(intervals);
+        return merge2(intervals, 0, intervals.length - 1);
     }
 
     private int[][] merge1(int[][] intervals) {
@@ -68,6 +72,45 @@ class Solution {
             result.add(mer);
         }
         return result.toArray(new int[0][0]);
+    }
+
+    // 归并排序实现
+    private int[][] merge2(int[][] intervals, int start, int end) {
+        if (start == end) {
+            return new int[][] {intervals[start]};
+        }
+        int mid = (start + end) >> 1;
+        int[][] left = merge2(intervals, start, mid);
+        int[][] right = merge2(intervals, mid + 1, end);
+        List<int[]> result = new ArrayList<>(end - start);
+        int i = 0, j = 0;
+        while (i < left.length && j < right.length) {
+            int[] min = left[i][0] < right[j][0] ? left[i++] : right[j++];
+            int l = min[0];
+            int r = min[1];
+
+            while ((i < left.length && r >= left[i][0]) || (j < right.length && r >= right[j][0])) {
+                if (i < left.length && r >= left[i][0]) {
+                    r = Math.max(r, left[i++][1]);
+                }
+                if (j < right.length && r >= right[j][0]) {
+                    r = Math.max(r, right[j++][1]);
+                }
+            }
+            result.add(new int[] {l, r});
+        }
+        for(; i < left.length; i++) {
+            result.add(left[i]);
+        }
+        for(; j < right.length; j++) {
+            result.add(right[j]);
+        }
+        return result.toArray(new int[0][0]);
+    }
+
+    // 快排实现
+    private int[][] merge3(int[][] intervals) {
+        return null;
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
