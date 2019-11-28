@@ -46,6 +46,10 @@ class MergeIntervals {
         int[][] intervals3 = {{2,3},{4,6},{5,7},{3,4}};
         int[][] expected3 = {{2,7}};
         assertArrayEquals(expected3, solution.merge(intervals3));
+
+        int[][] intervals4 = {{1,4},{0,0}};
+        int[][] expected4 = {{0,0},{1,4}};
+        assertArrayEquals(expected4, solution.merge(intervals4));
     }
     
 }
@@ -54,7 +58,10 @@ class MergeIntervals {
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
     public int[][] merge(int[][] intervals) {
-        return merge2(intervals, 0, intervals.length - 1);
+        if (intervals == null || intervals.length < 2) {
+            return intervals;
+        }
+        return merge3(intervals);
     }
 
     private int[][] merge1(int[][] intervals) {
@@ -108,9 +115,35 @@ class Solution {
         return result.toArray(new int[0][0]);
     }
 
-    // 快排实现
+    //
     private int[][] merge3(int[][] intervals) {
-        return null;
+        if (intervals == null || intervals.length < 2) {
+            return intervals;
+        }
+        int cnt = 0;
+        for (int i = 0; i < intervals.length; i++) {
+            for (int j = i + 1; j < intervals.length; j++) {
+                if (intervals[i][1] >= intervals[j][0] && intervals[i][0] <= intervals[j][1]) {
+                    if (intervals[i][0] < intervals[j][0]) {
+                        intervals[j][0] = intervals[i][0];
+                    }
+                    if (intervals[i][1] > intervals[j][1]) {
+                        intervals[j][1] = intervals[i][1];
+                    }
+                    intervals[i] = null;
+                    cnt ++;
+                    break;
+                }
+            }
+        }
+        int[][] result = new int[intervals.length - cnt][];
+        for (int i = 0, j = 0; i < intervals.length; i++) {
+            if (intervals[i] != null) {
+                result[j++] = intervals[i];
+            }
+        }
+        return result;
     }
+
 }
 //leetcode submit region end(Prohibit modification and deletion)
