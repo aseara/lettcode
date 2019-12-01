@@ -27,6 +27,8 @@ package com.aseara.leetcode.editor.cn.a493;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -42,6 +44,9 @@ class ReversePairs {
     void test1() {
         int[] test1 = {1,3,2,3,1};
         assertEquals(2, solution.reversePairs(test1));
+
+        int[] test2 = {2147483647,2147483647,-2147483647,-2147483647,-2147483647,2147483647};
+        assertEquals(9, solution.reversePairs(test2));
     }
     
 }
@@ -53,7 +58,7 @@ class Solution {
         if (nums == null || nums.length < 2) {
             return 0;
         }
-        return merge(nums, 0, nums.length - 1);
+        return method2(nums);
     }
 
     private int merge(int[] nums, int l, int r) {
@@ -92,5 +97,78 @@ class Solution {
         return cnt;
     }
 
+    private int method2(int[] nums) {
+        int[] copy = nums.clone();
+        Arrays.sort(copy);
+        BinaryIndexedTree bit = new BinaryIndexedTree(nums.length);
+        int cnt = 0;
+
+        for (int i = nums.length - 1; i > 0; i--) {
+            int num = nums[i];
+            cnt += bit.query(lowBound(copy, (num >> 1) - (~num & 1)));
+            bit.update(lowBound(copy, num), 1);
+        }
+
+        return cnt;
+    }
+
+    private int lowBound(int[] list, long num) {
+        for (int i = 0; i < list.length; i++) {
+            if (list[i] >= num) {
+                return i;
+            }
+        }
+        return list.length;
+    }
+
 }
+
+class BinaryIndexedTree {
+    private int[] bitArr;
+
+    public BinaryIndexedTree(int n) {
+        bitArr = new int[n + 1];
+    }
+
+    public BinaryIndexedTree(int[] list) {
+        bitArr = new int[list.length + 1];
+        System.arraycopy(list, 0, bitArr, 1, list.length);
+        for (int i = 1; i < bitArr.length - 1; i++) {
+            int j = i + (i & -i);
+            if (j < bitArr.length) {
+                bitArr[j] += bitArr[i];
+            }
+        }
+    }
+
+    public void update(int idx, int delta) {
+        for (int i = idx + 1; i < bitArr.length; i += (i & -i)) {
+            bitArr[i] += delta;
+        }
+    }
+
+    public int query(int idx) {
+        int result = 0;
+        for (int i = idx + 1; i > 0; i -= (i & -i)) {
+            result += bitArr[i];
+        }
+        return result;
+    }
+
+    public int range(int from, int to) {
+        if (from > to) {
+            return 0;
+        }
+        if (from == 0) {
+            return query(to);
+        }
+        int and = (from - 1) & to;
+        return query(to - and) - query(from - and - 1);
+    }
+
+    public int up(int idx) {
+        return range(idx, bitArr.length - 2);
+    }
+}
+
 //leetcode submit region end(Prohibit modification and deletion)
