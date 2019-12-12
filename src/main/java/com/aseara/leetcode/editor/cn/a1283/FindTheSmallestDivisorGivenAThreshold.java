@@ -73,11 +73,11 @@ class Solution {
     public int smallestDivisor(int[] nums, int threshold) {
         // 1. 求最大值
         int left = 1;
-        int right = max(nums);
+        int right = 1000_000;
         // 2. 从1到最大值，使用二分法查找不大于threshold的最小值
         while (left <= right) {
             int mid = left + (right - left) / 2;
-            if (sumDivideGt(nums, mid, threshold)) {
+            if (divideSum(nums, mid) > threshold) {
                 left = mid + 1;
             } else {
                 right = mid - 1;
@@ -86,20 +86,12 @@ class Solution {
         return left;
     }
 
-    private boolean sumDivideGt(int[] nums, int d, int t) {
+    private int divideSum(int[] nums, int d) {
         int result = 0;
         for (int num : nums) {
             result += (num + d - 1) / d;
         }
-        return result > t;
-    }
-
-    private int max(int[] nums) {
-        int max = 0;
-        for (int num : nums) {
-            max = Math.max(num, max);
-        }
-        return max;
+        return result;
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
