@@ -19,6 +19,8 @@ package com.aseara.leetcode.editor.cn.a300;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -34,6 +36,7 @@ class LongestIncreasingSubsequence {
     void test1() {
         int[] nums1 = {10,9,2,5,3,7,101,18};
         assertEquals(4, solution.lengthOfLIS(nums1));
+        assertEquals(4, solution.lengthOfLIS(nums1));
     }
     
 }
@@ -41,6 +44,10 @@ class LongestIncreasingSubsequence {
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
     public int lengthOfLIS(int[] nums) {
+        return method2(nums);
+    }
+
+    private int method1(int[] nums) {
         if (nums == null || nums.length == 0) {
             return 0;
         }
@@ -63,5 +70,24 @@ class Solution {
         }
         return Math.max(memo[n-1][0], memo[n-1][1]);
     }
+
+    private int method2(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        if (nums.length == 1) {
+            return 1;
+        }
+        int[] memo = new int[nums.length];
+        int len = 0;
+        for(int num : nums) {
+            int i = Arrays.binarySearch(memo, 0, len, num);
+            i = i < 0 ? -(i + 1) : i;
+            memo[i] = num;
+            len = i == len ? len + 1 : len;
+        }
+        return len;
+    }
+
 }
 //leetcode submit region end(Prohibit modification and deletion)
