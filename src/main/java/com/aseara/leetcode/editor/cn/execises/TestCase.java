@@ -53,6 +53,7 @@
 // Related Topics 贪心算法
 package com.aseara.leetcode.editor.cn.execises;
 
+import com.aseara.leetcode.editor.cn.base.ListNode;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -78,18 +79,7 @@ class LemonadeChange {
     
     @Test
     void test1() {
-
-        int[][] mat = {{0, 0}, {0, 1}};
-        assertEquals(3, solution.minFlips(mat));
-
-        int[][] mat2 = {{0}};
-        assertEquals(0, solution.minFlips(mat2));
-
-        int[][] mat4 = {{1, 0, 0}, {1, 0, 0}};
-        assertEquals(-1, solution.minFlips(mat4));
-
-        int[][] mat3 = {{1,1,1}, {1,0,1}, {0,0,0}};
-        assertEquals(6, solution.minFlips(mat3));
+        System.out.println(solution.sequentialDigits(1000, 13000));
     }
     
 }
@@ -104,6 +94,44 @@ class TreeNode {
 
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
+
+    public List<Integer> sequentialDigits(int low, int high) {
+        List<Integer> result = new LinkedList<>();
+        int lCnt = (int)Math.log10(low) + 1;
+        int hCnt = (int)Math.log10(high) + 1;
+        for (int i = lCnt; i <= hCnt ; i++) {
+            int b = 1;
+            int a = 1;
+            for (int j = 2; j <= i; j++) {
+                b *= 10;
+                b += j;
+
+                a *= 10;
+                a += 1;
+            }
+            for (int j = 0; j <= 9 - i; j++) {
+                int num = b + a * j;
+                if (num > high) {
+                    break;
+                }
+                if (num >= low) {
+                    result.add(num);
+                }
+            }
+        }
+        return result;
+    }
+
+    public int getDecimalValue(ListNode head) {
+        int result = head.val;
+        ListNode node = head.next;
+        while (node != null) {
+            result = result << 1;
+            result = result | node.val;
+            node = node.next;
+        }
+        return result;
+    }
 
     public int minFlips(int[][] mat) {
         int num = matToInt(mat);
