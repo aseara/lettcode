@@ -22,6 +22,8 @@ package com.aseara.leetcode.editor.cn.a525;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -47,32 +49,27 @@ class ContiguousArray {
     
 }
 
-
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
     public int findMaxLength(int[] nums) {
         if (nums == null || nums.length < 2) {
             return 0;
         }
+        int max = 0;
         int n = nums.length;
-        int[] memo = new int[n];
-        int[] nums2 = new int[n];
-        int sum = 0;
-        for (int i = 0; i < n; i++) {
-            nums2[i] = nums[i] == 1 ? 1 : -1;
-            sum += nums2[i];
-        }
-        memo[0] = sum;
-        for (int i = n; i > 1; i--) {
-            for (int j = 0; j <= n-i; j++) {
-                if (memo[j] == 0) {
-                    return i;
-                }
-                memo[j] -= nums2[i+j-1];
+        int[] memo = new int[2 * n + 1];
+        Arrays.fill(memo, -2);
+        int sum = n;
+        memo[sum] = -1;
+        for (int i = 0; i < nums.length; i++) {
+            sum += nums[i] == 1 ? 1 : -1;
+            if (memo[sum] == -2) {
+                memo[sum] = i;
+            } else {
+                max = Math.max(max, i - memo[sum]);
             }
-            memo[n-i+1] = memo[n-i] - nums2[n-i] + nums2[n-1];
         }
-        return 0;
+        return max;
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
