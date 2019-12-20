@@ -57,13 +57,12 @@ class InvertBinaryTree {
  */
 class Solution {
     public TreeNode invertTree(TreeNode root) {
-        if (root != null) {
-            invertTree(root.left);
-            invertTree(root.right);
-            TreeNode tmp = root.left;
-            root.left = root.right;
-            root.right = tmp;
+        if (root == null) {
+            return null;
         }
+        TreeNode left = invertTree(root.left);
+        root.left = invertTree(root.right);
+        root.right = left;
         return root;
     }
 }
