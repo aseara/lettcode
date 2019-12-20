@@ -79,7 +79,8 @@ class LemonadeChange {
     
     @Test
     void test1() {
-        System.out.println(solution.sequentialDigits(1000, 13000));
+        List<String> dict = Arrays.asList("hot","dot","dog","lot","log","cog");
+        assertEquals(5, solution.ladderLength("hit", "cog", dict));
     }
     
 }
@@ -94,6 +95,73 @@ class TreeNode {
 
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
+
+    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+        Set<String> dict = new HashSet<>(wordList);
+        if (!dict.contains(endWord)) {
+            return 0;
+        }
+        dict.remove(beginWord);
+        dict.remove(endWord);
+
+        Set<String> beginSet = new HashSet<>();
+        beginSet.add(beginWord);
+        Set<String> endSet = new HashSet<>();
+        endSet.add(endWord);
+
+        int result = 1;
+        while (!beginSet.isEmpty()) {
+            result ++;
+            Set<String> tempSet = new HashSet<>();
+            // 循环beginSet，尝试匹配endSet，成功返回，不成功，把下一层放到tempSet
+            for (String word : beginSet) {
+                char[] chars = word.toCharArray();
+                for (int i = 0; i < chars.length; i++) {
+                    char temp = chars[i];
+                    for (char j = 'a'; j <= 'z'; j++) {
+                        if (j != temp) {
+                            chars[i] = j;
+                            String next = new String(chars);
+                            if (endSet.contains(next)) {
+                                return result;
+                            }
+                            if (dict.contains(next)) {
+                                tempSet.add(next);
+                                dict.remove(next);
+                            }
+                        }
+                    }
+                    chars[i] = temp;
+                }
+            }
+            if (endSet.size() <= tempSet.size()) {
+                beginSet = endSet;
+                endSet = tempSet;
+            } else {
+                beginSet = tempSet;
+            }
+        }
+
+        return 0;
+    }
+
+    public int numDecodings(String s) {
+        char[] chars = s.toCharArray();
+        int n = chars.length;
+        int[] memo = new int[n + 1];
+        memo[n] = 1;
+        for (int i = n - 1; i >= 0; i--) {
+            char c = chars[i];
+            if (c == '0') {
+                memo[i] = 0;
+            } else if (i < n - 1 && (c == '1' || (c == '2' && chars[i+1] < '7'))) {
+                memo[i] = memo[i+1] + memo[i+2];
+            } else {
+                memo[i] = memo[i+1];
+            }
+        }
+        return memo[0];
+    }
 
     public List<Integer> sequentialDigits(int low, int high) {
         List<Integer> result = new LinkedList<>();
