@@ -53,38 +53,19 @@ class Solution {
         if (heights == null || heights.length == 0) {
             return 0;
         }
-
-        if (heights.length == 1) {
-            return heights[0];
-        }
-
-        LinkedList<Node> stack = new LinkedList<>();
-        stack.push(new Node(-1, 0));
-
+        LinkedList<Integer> stack = new LinkedList<>();
+        stack.push(-1);
         int max = 0;
-
-        for (int i = 0; i <= heights.length; i++) {
-            int height = i == heights.length ? 0 : heights[i];
-
-            while (stack.peek().height > height) {
-                int beforeHeight = stack.pop().height;
-                int left = stack.peek().index;
-                max = Math.max(max, beforeHeight * (i - left - 1));
+        for (int i = 0; i < heights.length; i++) {
+            while (stack.peek() != -1 && heights[stack.peek()] > heights[i]) {
+                max = Math.max(max, heights[stack.pop()] * (i - stack.peek() - 1));
             }
-
-            stack.push(new Node(i, height));
+            stack.push(i);
         }
-
+        while (stack.peek() != -1) {
+            max = Math.max(max, heights[stack.pop()] * (heights.length - stack.peek() - 1));
+        }
         return max;
-    }
-
-    private static class Node {
-        int index;
-        int height;
-        Node(int index, int height) {
-            this.index = index;
-            this.height = height;
-        }
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
