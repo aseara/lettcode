@@ -49,49 +49,24 @@ class Solution {
                 matrix[0] == null || matrix[0].length == 0) {
             return 0;
         }
-        int m = matrix.length;
         int n = matrix[0].length;
-        int[][] memo = new int[m][n];
-        for (int i = 0; i < m; i++) {
-            memo[i][0] = matrix[i][0] == '1' ? 1 : 0;
-            for (int j = 1; j < n; j++) {
-                memo[i][j] = matrix[i][j] == '1' ? memo[i][j-1] + 1 : 0;
-            }
-        }
+        int[] dp = new int[n];
         int max = 0;
-        LinkedList<Tuple> stack = new LinkedList<>();
-        Tuple edge = new Tuple(-1, 0);
-        stack.push(edge);
-        for (int j = 0; j < n; j++) {
-            Tuple left;
-            for (int i = 0; i < m; i++) {
-                left = stack.peek();
-                while (left.val > memo[i][j]) {
-                    int width = left.val;
-                    stack.pop();
-                    left = stack.peek();
-                    max = Math.max(max, (i - left.index - 1) * width);
+        LinkedList<Integer> stack = new LinkedList<>();
+        stack.push(-1);
+        for (char[] chars : matrix) {
+            for (int j = 0; j < n; j++) {
+                dp[j] = chars[j] == '1' ? dp[j] + 1 : 0;
+                for (int left = stack.peek(); left != -1 && dp[left] > dp[j]; left = stack.peek()) {
+                    max = Math.max(max, dp[stack.pop()] * (j - stack.peek() - 1));
                 }
-                stack.push(new Tuple(i, memo[i][j]));
+                stack.push(j);
             }
-            left = stack.peek();
-            while (left != edge) {
-                int width = left.val;
-                stack.pop();
-                left = stack.peek();
-                max = Math.max(max, (m - left.index - 1) * width);
+            for (int left = stack.peek(); left != -1; left = stack.peek()) {
+                max = Math.max(max, dp[stack.pop()] * (n - stack.peek() - 1));
             }
         }
         return max;
-    }
-
-    private static class Tuple {
-        int index;
-        int val;
-        Tuple(int index, int val) {
-            this.index = index;
-            this.val = val;
-        }
     }
 
 }
