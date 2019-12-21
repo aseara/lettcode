@@ -57,12 +57,12 @@ class Solution {
         for (char[] chars : matrix) {
             for (int j = 0; j < n; j++) {
                 dp[j] = chars[j] == '1' ? dp[j] + 1 : 0;
-                for (int left = stack.peek(); left != -1 && dp[left] > dp[j]; left = stack.peek()) {
+                while (stack.peek() != -1 && dp[stack.peek()] > dp[j]) {
                     max = Math.max(max, dp[stack.pop()] * (j - stack.peek() - 1));
                 }
                 stack.push(j);
             }
-            for (int left = stack.peek(); left != -1; left = stack.peek()) {
+            while (stack.peek() != -1) {
                 max = Math.max(max, dp[stack.pop()] * (n - stack.peek() - 1));
             }
         }
