@@ -69,7 +69,6 @@ class Solution {
             for (int i = n - 1; i >= 0; i--) {
                 rights[i] = row[i] == '1' ? Math.min(rights[i], right) : n;
                 right = row[i] == '1' ? right : i;
-
                 max = Math.max(max, heights[i] * (rights[i] - lefts[i]));
             }
         }
