@@ -15,6 +15,7 @@ package com.aseara.leetcode.editor.cn.a85;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -50,20 +51,26 @@ class Solution {
             return 0;
         }
         int n = matrix[0].length;
-        int[] dp = new int[n];
+
+        int[] heights = new int[n];
+        int[] lefts = new int[n];
+        int[] rights = new int[n];
+        Arrays.fill(rights, n);
+
         int max = 0;
-        LinkedList<Integer> stack = new LinkedList<>();
-        stack.push(-1);
-        for (char[] chars : matrix) {
-            for (int j = 0; j < n; j++) {
-                dp[j] = chars[j] == '1' ? dp[j] + 1 : 0;
-                while (stack.peek() != -1 && dp[stack.peek()] > dp[j]) {
-                    max = Math.max(max, dp[stack.pop()] * (j - stack.peek() - 1));
-                }
-                stack.push(j);
+        for (char[] row : matrix) {
+            int left = 0;
+            for (int i = 0; i < n; i++) {
+                heights[i] = row[i] == '1' ? heights[i] + 1 : 0;
+                lefts[i] = row[i] == '1' ? Math.max(lefts[i], left) : 0;
+                left = row[i] == '1' ? left : i + 1;
             }
-            while (stack.peek() != -1) {
-                max = Math.max(max, dp[stack.pop()] * (n - stack.peek() - 1));
+            int right = n;
+            for (int i = n - 1; i >= 0; i--) {
+                rights[i] = row[i] == '1' ? Math.min(rights[i], right) : n;
+                right = row[i] == '1' ? right : i;
+
+                max = Math.max(max, heights[i] * (rights[i] - lefts[i]));
             }
         }
         return max;
