@@ -56,17 +56,7 @@ package com.aseara.leetcode.editor.cn.execises;
 import com.aseara.leetcode.editor.cn.base.ListNode;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.*;
 
 /**
  * desc: 860.柠檬水找零 <br />
@@ -79,17 +69,9 @@ class LemonadeChange {
     
     @Test
     void test1() {
-        List<String> dict = Arrays.asList("hot","dot","dog","lot","log","cog");
-        assertEquals(5, solution.ladderLength("hit", "cog", dict));
+
     }
     
-}
-
-class TreeNode {
-    int val;
-    TreeNode left;
-    TreeNode right;
-    TreeNode(int x) { val = x; }
 }
 
 
