@@ -77,6 +77,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.LinkedList;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /**
 * desc: 5294.Maximum Candies You Can Get from Boxes <br />
 * Date: 2019/12/22 <br/>
@@ -88,7 +90,12 @@ private Solution solution = new Solution();
 
     @Test
     void test1() {
-    
+        int[] status = {1,1,1};
+        int[] candies = {100,1,100};
+        int[][] keys = {{},{},{},{},{}};
+        int[][] containedBoxes = {{1,2,3,4,5},{},{},{},{},{}};
+        int[] initialBoxes = {0};
+        assertEquals(6, solution.maxCandies(status, candies, keys, containedBoxes, initialBoxes));
     }
 
 }
