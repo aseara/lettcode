@@ -1,5 +1,7 @@
 package com.aseara.leetcode.editor.cn.a104;
 
+import com.aseara.leetcode.editor.cn.base.TreeNode;
+
 /**
  * Created by 邱境德 on 2017/4/23.
  * Algorithm 104
