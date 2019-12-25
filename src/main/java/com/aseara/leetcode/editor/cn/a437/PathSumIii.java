@@ -73,25 +73,19 @@ class Solution {
         if (root == null) {
             return 0;
         }
-        int[] nums = new int[1000];
-        return pathSum(root, sum, nums, 0);
+        int result = topSum(root, sum);
+        result += pathSum(root.left, sum);
+        result += pathSum(root.right, sum);
+        return result;
     }
 
-    private int pathSum(TreeNode node, int sum, int[] nums, int l) {
+    private int topSum(TreeNode node, int sum) {
         if (node == null) {
             return 0;
         }
-        int result = sum == node.val ? 1 : 0;
-        int tmp = 0;
-        for (int i = l - 1; i >= 0; i--) {
-            tmp += nums[i];
-            if (sum == tmp + node.val) {
-                result ++;
-            }
-        }
-        nums[l] = node.val;
-        result += pathSum(node.left, sum, nums, l + 1);
-        result += pathSum(node.right, sum, nums, l + 1);
+        int result = node.val == sum ? 1 : 0;
+        result += topSum(node.left, sum - node.val);
+        result += topSum(node.right, sum - node.val);
         return result;
     }
 
