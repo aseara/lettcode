@@ -69,7 +69,10 @@ class LemonadeChange {
     
     @Test
     void test1() {
+        List<List<String>> w = Arrays.asList(Arrays.asList("A", "B"), Arrays.asList("C"), Arrays.asList("B", "C"), Arrays.asList("D"));
+        int[][] f = {{1,2}, {0,3},{0,3}, {1,2}};
 
+        System.out.println(solution.watchedVideosByFriends(w,f,0,2));
     }
     
 }
@@ -77,6 +80,127 @@ class LemonadeChange {
 
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
+
+
+    public int minInsertions(String s) {
+        int len = s.length();
+        char[] chars = s.toCharArray();
+
+        int[][] memo = new int[len][len];
+        for(int[] subMemo : memo) {
+            Arrays.fill(subMemo, -1);
+        }
+        return minInsert(chars, 0, len - 1, memo);
+    }
+
+    private int minInsert(char[] chars, int s, int e, int[][] memo) {
+        if (memo[s][e] == -1) {
+            int cnt;
+            if (s >= e) {
+                cnt = 0;
+            } else if (chars[s] == chars[e]) {
+                cnt = minInsert(chars, s + 1, e - 1, memo);
+            } else {
+                cnt = Math.min(minInsert(chars, s + 1, e, memo),
+                        minInsert(chars, s, e - 1, memo)) + 1;
+            }
+            memo[s][e] = cnt;
+        }
+        return memo[s][e];
+    }
+
+
+
+
+    public List<String> watchedVideosByFriends(List<List<String>> watchedVideos, int[][] friends, int id, int level) {
+        Set<Integer> friendsSet = new HashSet<>();
+        friendsSet.add(id);
+
+        LinkedList<Integer> levelFriends = new LinkedList<>();
+        levelFriends.add(id);
+
+        for (int i = 0; i < level; i++) {
+            int size = levelFriends.size();
+            for (int j = 0; j < size; j++) {
+                int f = levelFriends.poll();
+                int[] ff = friends[f];
+                for (int sf : ff) {
+                    if (!friendsSet.contains(sf)) {
+                        levelFriends.add(sf);
+                        friendsSet.add(sf);
+                    }
+                }
+            }
+        }
+
+        Map<String, VideoCnt> map = new HashMap<>();
+        for (int i = 0; i < levelFriends.size(); i++) {
+            List<String> videos = watchedVideos.get(levelFriends.get(i));
+            for(String video : videos) {
+                VideoCnt vc = map.computeIfAbsent(video, k -> new VideoCnt(video));
+                vc.cnt += 1;
+            }
+        }
+
+        List<VideoCnt> list = new ArrayList<>(map.values());
+        list.sort(new Comparator<VideoCnt>() {
+            @Override
+            public int compare(VideoCnt o1, VideoCnt o2) {
+                if (o1.cnt != o2.cnt) {
+                    return o1.cnt - o2.cnt;
+                }
+                return o1.video.compareTo(o2.video);
+            }
+        });
+
+        List<String> result = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            result.add(list.get(i).video);
+        }
+        return result;
+    }
+
+    private static class VideoCnt{
+        VideoCnt(String video) {
+            this.video = video;
+        }
+        String video;
+        int cnt;
+    }
+
+
+    public String freqAlphabets(String s) {
+        StringBuilder sb = new StringBuilder();
+        char[] chars = s.toCharArray();
+        int len = s.length();
+
+        for (int i = 0; i < len; i++) {
+            if (i + 2 < len && chars[i + 2] == '#') {
+                char c = (char)((chars[i] - '1') * 10 + chars[i + 1] - '0' + 'j');
+                sb.append(c);
+                i = i + 2;
+            } else {
+                sb.append((char)(chars[i] - '1' + 'a'));
+            }
+        }
+        return sb.toString();
+    }
+
+    public int[] xorQueries(int[] arr, int[][] queries) {
+        int[] result = new int[queries.length];
+
+        for (int i = 0; i < queries.length; i++) {
+            int l = queries[i][0];
+            int r = queries[i][1];
+            int xor = arr[l];
+            for (int j = l + 1; j <= r; j++) {
+                xor ^= arr[j];
+            }
+            result[i] = xor;
+        }
+
+        return result;
+    }
 
     public int ladderLength(String beginWord, String endWord, List<String> wordList) {
         Set<String> dict = new HashSet<>(wordList);
